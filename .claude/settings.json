@@ -1,0 +1,11 @@
+{
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
+  "enabledPlugins": {
+    "code-review-anthropics@anthropic-plugin-directory": false,
+    "cesiumjs-skills@cesiumjs-skills": false
+  }
+}
