@@ -1,5 +1,5 @@
 services:
-  mongod:
+  mongodb:
     image: mongo:latest
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
@@ -13,22 +13,22 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 6s
+      start_period: 4s
     networks:
       - default
 
   mongo-express:
     image: mongo-express:latest
     environment:
-      # ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
-      # ME_CONFIG_MONGODB_AUTH_DATABASE: "db"
-      # ME_CONFIG_MONGODB_AUTH_USERNAME: "admin"
-      # ME_CONFIG_MONGODB_AUTH_PASSWORD: "pass"
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
+      ME_CONFIG_MONGODB_AUTH_USERNAME: "root"
+      ME_CONFIG_MONGODB_AUTH_PASSWORD: "1234"
 
-      ME_CONFIG_MONGODB_PORT: 27017
-      ME_CONFIG_BASICAUTH_USERNAME: root
+      ME_CONFIG_MONGODB_URL: "mongodb://root:1234@mongodb:27017/"
+      ME_CONFIG_BASICAUTH_ENABLED: true
+      ME_CONFIG_BASICAUTH_USERNAME: user
       ME_CONFIG_BASICAUTH_PASSWORD: 1234
-      ME_CONFIG_MONGODB_SERVER: mongod
+
       ME_CONFIG_OPTIONS_EDITORTHEME: "default"
       ME_CONFIG_SITE_BASEURL: "/"
     ports:
@@ -37,9 +37,9 @@ services:
     networks:
       - default
     depends_on:
-      mongod:
+      mongodb:
         condition: service_healthy
 
-# networks:
-#   default:
-#     name: "global_env"
+networks:
+  default:
+    name: "global"
