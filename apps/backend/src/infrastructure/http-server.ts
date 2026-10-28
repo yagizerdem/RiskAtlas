@@ -12,6 +12,7 @@ import { printStartupCli } from "@core/cli/startup-banner.js";
 // import { corsMiddleware } from "@/infrastructure/security/middleware/cors.middleware.js";
 // import { rateLimitMiddleware } from "@/infrastructure/security/middleware/rateLimit.middleware.js";
 import { connectDb } from "@infrastructure/db/db.js";
+import { isPortAvailable } from "@infrastructure/util/port-util.js";
 
 export async function createApp() {
   // 1. Handlers globaux
@@ -93,7 +94,6 @@ export async function startHttp(port = 3000) {
   const version = process.env.APP_VERSION || "1.0.0";
 
   // 8. Vérification du port
-  const { isPortAvailable } = await import("./utils/portUtils.js");
   if (!(await isPortAvailable(port))) {
     appLogger.error(
       `Port ${port} is already in use. Please free the port or use another one.`,
@@ -106,7 +106,6 @@ export async function startHttp(port = 3000) {
   }
 
   // Initialize DB for logging purposes if needed (already done in createApp)
-  const { AppDataSource } = await import("./db/db.js");
 
   const server = app.listen(port, () => {
     const bootTimeMs = Date.now() - bootStart;
@@ -119,11 +118,8 @@ export async function startHttp(port = 3000) {
       port,
       host,
       bootTimeMs,
-      dbType: AppDataSource.options.type,
-      dbAddress:
-        typeof AppDataSource.options.database === "string"
-          ? AppDataSource.options.database
-          : "unknown",
+      dbType: "mongo",
+      dbAddress: process.env.MONGODB_URI || "unknown",
     });
 
     // Log technique via ILogger

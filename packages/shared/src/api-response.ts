@@ -1,5 +1,5 @@
 import { HttpStatusCode } from "./http-status-code.js";
-import { MachineCode } from "./machine-code.js";
+import { MachineCode } from "";
 
 export class ApiResponse<T> {
   constructor(
