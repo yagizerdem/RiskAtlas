@@ -14,17 +14,21 @@ import { attachRequestLogger } from "./http/middleware/request-logger.middleware
 import { connectDb } from "@infrastructure/db/db.js";
 import { isPortAvailable } from "@infrastructure/util/port-util.js";
 import mongoose from "mongoose";
+import "@infrastructure/logging/pino-app-logger.registry.js";
+import "@infrastructure/logging/pino-http-request-logger.registry.js";
+import { HttpStatusCode } from "@riskatlas/shared";
 
 export async function createApp() {
   setupGlobalErrorHandlers();
 
   // Initialize DB
   await connectDb();
+  console.log(`Database connection state: ${mongoose.connection.readyState}`);
 
   const app = express();
   app.set("trust proxy", true);
 
-  // 2. Security Filter Chain
+  // Security Filter Chain
   // const securityFilterChain = new HttpSecurityBuilder()
   //   .addFilter(helmetMiddleware())
   //   .addFilter(corsMiddleware())
@@ -58,7 +62,9 @@ export async function createApp() {
   });
 
   app.get("/health", (req, res) => {
-    res.status(200).json({ status: "UP", timestamp: new Date().toISOString() });
+    res
+      .status(HttpStatusCode.OK)
+      .json({ status: "UP", timestamp: new Date().toISOString() });
   });
 
   if (process.env.NODE_ENV === "development") {
@@ -137,11 +143,11 @@ export async function startHttp(port = 3000) {
       context: "Shutdown",
     });
 
-    // 1. Stop accepting new connections
+    // Stop accepting new connections
     server.close(async () => {
       appLogger.info("HTTP server closed.", { context: "Shutdown" });
 
-      // 2. Close DB connection
+      //  Close DB connection
       if (mongoose.connection.readyState) {
         await mongoose.connection.close();
         appLogger.info("Database connection closed.", { context: "Shutdown" });

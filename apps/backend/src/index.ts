@@ -1,3 +1,5 @@
+import "@core/env/load-env.js";
+import "reflect-metadata";
 import { startHttp } from "@infrastructure/http-server.js";
 
 async function main() {
