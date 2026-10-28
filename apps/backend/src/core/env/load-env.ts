@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
 import path from "node:path";
 
-dotenv.config({
-  path: path.resolve(import.meta.dirname, "../../.env.dev"),
-});
+if (process.env.NODE_ENV === "development") {
+  dotenv.config({
+    path: path.resolve(import.meta.dirname, "../../../.env.dev"),
+  });
+}
