@@ -19,6 +19,7 @@ import "@infrastructure/logging/pino-http-request-logger.registry.js";
 import { HttpStatusCode } from "@riskatlas/shared";
 
 export async function createApp() {
+  // process-level error handling setup
   setupGlobalErrorHandlers();
 
   // Initialize DB
