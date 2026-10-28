@@ -4,8 +4,9 @@ import { RequestHandler, Request, Response } from "express";
 import { randomUUID } from "crypto";
 
 import { createBasePinoLogger } from "@infrastructure/logging/pino-config.js";
-import { TOKENS } from "@/core/di/tokens.js";
-import { IHttpRequestLogger } from "@/infrastructure/http/interfaces/IHttpRequestLogger.js";
+import { TOKENS } from "@core/di/tokens.js";
+import { IHttpRequestLogger } from "@infrastructure/http/interfaces/IHttpRequestLogger.js";
+import { HttpStatusCode } from "@riskatlas/shared";
 
 type HighResTime = bigint;
 
@@ -34,9 +35,15 @@ export class PinoHttpRequestLogger implements IHttpRequestLogger {
         responseTime: () => undefined,
       },
       customLogLevel: function (_req, res, err) {
-        if (res.statusCode >= 400 && res.statusCode < 500) {
+        if (
+          res.statusCode >= HttpStatusCode.BAD_REQUEST &&
+          res.statusCode < HttpStatusCode.INTERNAL_SERVER_ERROR
+        ) {
           return "warn";
-        } else if (res.statusCode >= 500 || err) {
+        } else if (
+          res.statusCode >= HttpStatusCode.INTERNAL_SERVER_ERROR ||
+          err
+        ) {
           return "error";
         }
         return "info";

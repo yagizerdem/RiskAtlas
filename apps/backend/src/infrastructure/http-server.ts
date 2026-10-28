@@ -1,7 +1,7 @@
 import express from "express";
-// import { container } from "tsyringe";
-// import { TOKENS } from "@/core/di/tokens.js";
-// import { ILogger } from "@/core/logging/ILogger.js";
+import { container } from "tsyringe";
+import { TOKENS } from "@core/di/tokens.js";
+import { ILogger } from "@core/logging/ILogger.js";
 // import { setupGlobalErrorHandlers } from "@/core/logging/setupGlobalErrorHandlers.js";
 import { printStartupCli } from "@core/cli/startup-banner.js";
 // import { IHttpRequestLogger } from "./http/interfaces/IHttpRequestLogger.js";
@@ -13,6 +13,8 @@ import { printStartupCli } from "@core/cli/startup-banner.js";
 // import { rateLimitMiddleware } from "@/infrastructure/security/middleware/rateLimit.middleware.js";
 import { connectDb } from "@infrastructure/db/db.js";
 import { isPortAvailable } from "@infrastructure/util/port-util.js";
+import { setupGlobalErrorHandlers } from "@core/logging/setupGlobalErrorHandlers.js";
+import mongoose from "mongoose";
 
 export async function createApp() {
   // 1. Handlers globaux
@@ -87,7 +89,7 @@ export async function startHttp(port = 3000) {
   const app = await createApp();
 
   // 8. Démarrage du serveur
-  // const appLogger = container.resolve<ILogger>(TOKENS.Logger);
+  const appLogger = container.resolve<ILogger>(TOKENS.Logger);
   const env = process.env.NODE_ENV || "development";
   const host = process.env.HOST || "localhost";
   const appName = process.env.APP_NAME || "My Awesome API";
@@ -143,8 +145,8 @@ export async function startHttp(port = 3000) {
       appLogger.info("HTTP server closed.", { context: "Shutdown" });
 
       // 2. Close DB connection
-      if (AppDataSource.isInitialized) {
-        await AppDataSource.destroy();
+      if (mongoose.connection.readyState) {
+        await mongoose.connection.close();
         appLogger.info("Database connection closed.", { context: "Shutdown" });
       }
 
@@ -160,7 +162,7 @@ export async function startHttp(port = 3000) {
         context: "Shutdown",
       });
       process.exit(1);
-    }, 10000);
+    }, 10_000);
   };
 
   process.on("SIGTERM", () => shutdown("SIGTERM"));
