@@ -42,14 +42,12 @@ export function printStartupCli(opts: StartupCliOptions) {
   const cpuCount = os.cpus().length;
   const totalMemGb = (os.totalmem() / 1024 / 1024 / 1024).toFixed(1);
 
-  // 1) ASCII banner façon Spring Boot
   const titleLine = version
     ? `${appName} ${chalk.dim(`v${version}`)}`
     : appName;
 
   const asciiBanner = ["", chalk.green("   :: " + titleLine + " ::"), ""];
 
-  // 2) Tableau d’infos façon Nest CLI
   const tableRows: [string, string][] = [
     ["Env", chalk.cyan(env)],
     ["Port", chalk.cyan(String(port))],
@@ -110,7 +108,6 @@ export function printStartupCli(opts: StartupCliOptions) {
     });
   }
 
-  // 4) Diagnostic ligne type Nest
   const diagLine =
     chalk.gray("[Diag]") +
     " " +
@@ -118,7 +115,6 @@ export function printStartupCli(opts: StartupCliOptions) {
       `Node ${nodeVersion} | CPU ${cpuCount} cores | RAM ${totalMemGb} GB`,
     );
 
-  // 5) Affichage final
   [
     ...asciiBanner,
     ...tableLines,

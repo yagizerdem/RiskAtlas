@@ -2,10 +2,10 @@ import express from "express";
 import { container } from "tsyringe";
 import { TOKENS } from "@core/di/tokens.js";
 import { ILogger } from "@core/logging/ILogger.js";
-// import { setupGlobalErrorHandlers } from "@/core/logging/setupGlobalErrorHandlers.js";
+import { setupGlobalErrorHandlers } from "@core/logging/setupGlobalErrorHandlers.js";
 import { printStartupCli } from "@core/cli/startup-banner.js";
-// import { IHttpRequestLogger } from "./http/interfaces/IHttpRequestLogger.js";
-// import { attachRequestLogger } from "./http/middleware/request-logger.middleware.js";
+import { IHttpRequestLogger } from "@infrastructure/http/interfaces/IHttpRequestLogger.js";
+import { attachRequestLogger } from "./http/middleware/request-logger.middleware.js";
 // import { errorMiddleware } from "./http/middleware/error.middleware.js";
 // import { HttpSecurityBuilder } from "@/infrastructure/security/SecurityFilterChain.js";
 // import { helmetMiddleware } from "@/infrastructure/security/middleware/helmet.middleware.js";
@@ -13,7 +13,6 @@ import { printStartupCli } from "@core/cli/startup-banner.js";
 // import { rateLimitMiddleware } from "@/infrastructure/security/middleware/rateLimit.middleware.js";
 import { connectDb } from "@infrastructure/db/db.js";
 import { isPortAvailable } from "@infrastructure/util/port-util.js";
-import { setupGlobalErrorHandlers } from "@core/logging/setupGlobalErrorHandlers.js";
 import mongoose from "mongoose";
 
 export async function createApp() {
@@ -41,21 +40,20 @@ export async function createApp() {
 
   // app.use(securityFilterChain.getMiddleware());
 
-  // 3. HTTP logging
-  // const httpRequestLogger = container.resolve<IHttpRequestLogger>(
-  //   TOKENS.HttpRequestLogger,
-  // );
-  // app.use(httpRequestLogger.getMiddleware());
+  //  HTTP logging
+  const httpRequestLogger = container.resolve<IHttpRequestLogger>(
+    TOKENS.HttpRequestLogger,
+  );
+  app.use(httpRequestLogger.getMiddleware());
 
-  // 4. Logger par requête
-  // app.use(attachRequestLogger);
+  app.use(attachRequestLogger);
 
-  // 5. Body parsing
+  //  Body parsing
   app.use(express.json());
 
-  // 6. Routes
+  //  Routes
   app.get("/", (req, res) => {
-    // req.logger.info("Handling root route", { context: "RootHandler" });
+    req.logger.info("Handling root route", { context: "RootHandler" });
     res.send("OK");
   });
 
@@ -63,9 +61,11 @@ export async function createApp() {
     res.status(200).json({ status: "UP", timestamp: new Date().toISOString() });
   });
 
-  app.get("/error", () => {
-    throw new Error("Simulated error for testing purposes");
-  });
+  if (process.env.NODE_ENV === "development") {
+    app.get("/error", () => {
+      throw new Error("Simulated error for testing purposes");
+    });
+  }
 
   // // User Routes
   // const { userRouter } =
@@ -90,7 +90,7 @@ export async function startHttp(port = 3000) {
   const appLogger = container.resolve<ILogger>(TOKENS.Logger);
   const env = process.env.NODE_ENV || "development";
   const host = process.env.HOST || "localhost";
-  const appName = process.env.APP_NAME || "My Awesome API";
+  const appName = process.env.APP_NAME || "RiskAtlasAPI";
   const version = process.env.APP_VERSION || "1.0.0";
 
   if (!(await isPortAvailable(port))) {
