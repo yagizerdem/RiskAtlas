@@ -11,16 +11,14 @@ import { printStartupCli } from "@core/cli/startup-banner.js";
 // import { helmetMiddleware } from "@/infrastructure/security/middleware/helmet.middleware.js";
 // import { corsMiddleware } from "@/infrastructure/security/middleware/cors.middleware.js";
 // import { rateLimitMiddleware } from "@/infrastructure/security/middleware/rateLimit.middleware.js";
+import { connectDb } from "@infrastructure/db/db.js";
 
 export async function createApp() {
   // 1. Handlers globaux
   setupGlobalErrorHandlers();
 
   // Initialize DB
-  const { AppDataSource } = await import("./db/db.js");
-  if (!AppDataSource.isInitialized) {
-    await AppDataSource.initialize();
-  }
+  await connectDb();
 
   const app = express();
   app.set("trust proxy", true);

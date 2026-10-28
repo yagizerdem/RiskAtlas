@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "@riskatlas/web",
   "private": true,
   "version": "0.0.0",
   "type": "module",
