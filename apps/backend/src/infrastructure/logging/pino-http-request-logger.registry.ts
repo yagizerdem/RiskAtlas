@@ -69,7 +69,6 @@ export class PinoHttpRequestLogger implements IHttpRequestLogger {
   }
 
   private customReceivedMessage(req: Request, _res: Response): string {
-    // on stocke un startAt haute résolution sur la requête
     const reqAny = req as any;
     reqAny._startAt = process.hrtime.bigint() as HighResTime;
 
@@ -81,7 +80,6 @@ export class PinoHttpRequestLogger implements IHttpRequestLogger {
 
     const path = req.originalUrl || req.url;
 
-    // pino-http rajoutera le niveau etc., ici on se consacre au message
     return `(#${reqAny.id}) Started ${req.method} ${path} for ${ip}`;
   }
 

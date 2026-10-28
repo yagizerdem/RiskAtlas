@@ -17,7 +17,6 @@ import { setupGlobalErrorHandlers } from "@core/logging/setupGlobalErrorHandlers
 import mongoose from "mongoose";
 
 export async function createApp() {
-  // 1. Handlers globaux
   setupGlobalErrorHandlers();
 
   // Initialize DB
@@ -88,14 +87,12 @@ export async function startHttp(port = 3000) {
   const bootStart = Date.now();
   const app = await createApp();
 
-  // 8. Démarrage du serveur
   const appLogger = container.resolve<ILogger>(TOKENS.Logger);
   const env = process.env.NODE_ENV || "development";
   const host = process.env.HOST || "localhost";
   const appName = process.env.APP_NAME || "My Awesome API";
   const version = process.env.APP_VERSION || "1.0.0";
 
-  // 8. Vérification du port
   if (!(await isPortAvailable(port))) {
     appLogger.error(
       `Port ${port} is already in use. Please free the port or use another one.`,

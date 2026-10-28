@@ -1,3 +1,4 @@
+import { ApiResponse, HttpStatusCode } from "@riskatlas/shared";
 import { Request, Response, NextFunction } from "express";
 import { ZodType, ZodError } from "zod";
 
@@ -12,11 +13,19 @@ export const validateRequest = (schema: ZodType) => {
       return next();
     } catch (error) {
       if (error instanceof ZodError) {
-        return res.status(400).json({
-          status: "error",
-          message: "Validation failed",
-          errors: error.issues,
+        const issues = error.issues;
+        issues.forEach((issue) => {
+          console.log(
+            `Validation issue: ${issue.path.join(".")} - ${issue.message}`,
+          );
         });
+
+        return res.status(HttpStatusCode.BAD_REQUEST).json(
+          ApiResponse.badRequest(
+            "Validation failed",
+            error.issues.map((issue) => issue.message),
+          ),
+        );
       }
       return next(error);
     }
