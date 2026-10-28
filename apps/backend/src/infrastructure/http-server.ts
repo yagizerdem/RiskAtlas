@@ -3,7 +3,7 @@ import express from "express";
 // import { TOKENS } from "@/core/di/tokens.js";
 // import { ILogger } from "@/core/logging/ILogger.js";
 // import { setupGlobalErrorHandlers } from "@/core/logging/setupGlobalErrorHandlers.js";
-// import { printStartupCli } from "@/core/cli/startupBanner.js";
+import { printStartupCli } from "@core/cli/startup-banner.js";
 // import { IHttpRequestLogger } from "./http/interfaces/IHttpRequestLogger.js";
 // import { attachRequestLogger } from "./http/middleware/request-logger.middleware.js";
 // import { errorMiddleware } from "./http/middleware/error.middleware.js";
