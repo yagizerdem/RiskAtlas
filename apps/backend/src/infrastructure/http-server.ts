@@ -75,9 +75,9 @@ export async function createApp() {
   }
 
   // // User Routes
-  // const { userRouter } =
-  //   await import("@/modules/user/infrastructure/http/UserRouter.js");
-  // app.use("/users", userRouter);
+  const { authRouter } =
+    await import("@modules/auth/infrastructure/http/auth-route.js");
+  app.use("/auth", authRouter);
 
   // // Project Routes
   // const { projectRouter } =

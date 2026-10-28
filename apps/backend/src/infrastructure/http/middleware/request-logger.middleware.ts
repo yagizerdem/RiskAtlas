@@ -1,8 +1,8 @@
 // src/infrastructure/http/requestLoggerMiddleware.ts
-import { ILogger } from "@/core/logging/ILogger.js";
+import { ILogger } from "@core/logging/ILogger.js";
 import { Request, Response, NextFunction } from "express";
 import { container } from "tsyringe";
-import { TOKENS } from "@/core/di/tokens.js";
+import { TOKENS } from "@core/di/tokens.js";
 
 export function attachRequestLogger(
   req: Request,
