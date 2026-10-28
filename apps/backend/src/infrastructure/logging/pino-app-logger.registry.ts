@@ -1,7 +1,7 @@
 import { injectable, registry } from "tsyringe";
 import { Logger as PinoLogger } from "pino";
 
-import { createBasePinoLogger } from "./pino-config.js";
+import { createBasePinoLogger } from "@infrastructure/logging/pino-config.js";
 import { TOKENS } from "@core/di/tokens.js";
 import { LogContext } from "@core/logging/LogContext.js";
 import { ILogger } from "@core/logging/ILogger.js";
