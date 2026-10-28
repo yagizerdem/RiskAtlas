@@ -1,44 +1,34 @@
 import { HttpStatusCode } from "./http-status-code.js";
-import { MachineCode } from "";
 
 export class ApiResponse<T> {
-  constructor(
-    message: string,
-    httpStatusCode: HttpStatusCode,
-    machineCode?: MachineCode,
-    data?: T,
-  ) {
+  constructor(message: string, httpStatusCode: HttpStatusCode, data?: T) {
     this.message = message;
     this.httpStatusCode = httpStatusCode;
-    this.machineCode = machineCode;
     this.data = data;
   }
 
   public readonly message: string;
   public readonly httpStatusCode: HttpStatusCode;
-  public readonly machineCode?: MachineCode;
   public readonly data?: T;
 
   static from<T>({
     message,
     httpStatusCode,
-    machineCode,
     data,
   }: {
     message: string;
     httpStatusCode: HttpStatusCode;
-    machineCode?: MachineCode;
     data?: T;
   }): ApiResponse<T> {
-    return new ApiResponse(message, httpStatusCode, machineCode, data);
+    return new ApiResponse(message, httpStatusCode, data);
   }
 
   static ok<T>(data?: T, message = "OK"): ApiResponse<T> {
-    return new ApiResponse(message, HttpStatusCode.OK, undefined, data);
+    return new ApiResponse(message, HttpStatusCode.OK, data);
   }
 
   static created<T>(data?: T, message = "Created"): ApiResponse<T> {
-    return new ApiResponse(message, HttpStatusCode.CREATED, undefined, data);
+    return new ApiResponse(message, HttpStatusCode.CREATED, data);
   }
 
   static noContent(message = "No Content"): ApiResponse<never> {
@@ -48,47 +38,29 @@ export class ApiResponse<T> {
   static error(
     message: string,
     httpStatusCode: HttpStatusCode,
-    machineCode?: MachineCode,
   ): ApiResponse<never> {
-    return new ApiResponse(message, httpStatusCode, machineCode);
+    return new ApiResponse(message, httpStatusCode);
   }
 
-  static badRequest(
-    message = "Bad Request",
-    machineCode?: MachineCode,
-  ): ApiResponse<never> {
-    return ApiResponse.error(message, HttpStatusCode.BAD_REQUEST, machineCode);
+  static badRequest(message = "Bad Request"): ApiResponse<never> {
+    return ApiResponse.error(message, HttpStatusCode.BAD_REQUEST);
   }
 
-  static unauthorized(
-    message = "Unauthorized",
-    machineCode?: MachineCode,
-  ): ApiResponse<never> {
-    return ApiResponse.error(message, HttpStatusCode.UNAUTHORIZED, machineCode);
+  static unauthorized(message = "Unauthorized"): ApiResponse<never> {
+    return ApiResponse.error(message, HttpStatusCode.UNAUTHORIZED);
   }
 
-  static forbidden(
-    message = "Forbidden",
-    machineCode?: MachineCode,
-  ): ApiResponse<never> {
-    return ApiResponse.error(message, HttpStatusCode.FORBIDDEN, machineCode);
+  static forbidden(message = "Forbidden"): ApiResponse<never> {
+    return ApiResponse.error(message, HttpStatusCode.FORBIDDEN);
   }
 
-  static notFound(
-    message = "Not Found",
-    machineCode?: MachineCode,
-  ): ApiResponse<never> {
-    return ApiResponse.error(message, HttpStatusCode.NOT_FOUND, machineCode);
+  static notFound(message = "Not Found"): ApiResponse<never> {
+    return ApiResponse.error(message, HttpStatusCode.NOT_FOUND);
   }
 
   static internalServerError(
     message = "Internal Server Error",
-    machineCode?: MachineCode,
   ): ApiResponse<never> {
-    return ApiResponse.error(
-      message,
-      HttpStatusCode.INTERNAL_SERVER_ERROR,
-      machineCode,
-    );
+    return ApiResponse.error(message, HttpStatusCode.INTERNAL_SERVER_ERROR);
   }
 }

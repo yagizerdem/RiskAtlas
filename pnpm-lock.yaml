@@ -200,6 +200,9 @@ importers:
       '@riskatlas/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@types/express-serve-static-core':
+        specifier: ^5.1.3
+        version: 5.1.3
       chalk:
         specifier: ^6.0.1
         version: 6.0.1
@@ -218,6 +221,9 @@ importers:
       pino-http:
         specifier: ^11.0.0
         version: 11.0.0
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
       string-width:
         specifier: ^8.3.0
         version: 8.3.0
@@ -1705,6 +1711,9 @@ packages:
 
   real-require@1.0.0:
     resolution: {integrity: sha512-P4nbQYQfePJxRSmY+v/KINxVucm4NF3p3s7pJveMTtom52FR4YGltUQLB8idDXwDDWW+eYrWDFbuzUnjoWHF7g==}
+
+  reflect-metadata@0.2.2:
+    resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
 
   resium@1.27.0:
     resolution: {integrity: sha512-hhwIHdrSb3xQ3xvk+lNwcKy7lDd6lIGGWyxHIQhYQPKPO9PkC7lNmD6kY0JEUHZ8vL9nSp1v5x3LNm6MbxLk2w==}
@@ -3323,6 +3332,8 @@ snapshots:
   react@19.3.1: {}
 
   real-require@1.0.0: {}
+
+  reflect-metadata@0.2.2: {}
 
   resium@1.27.0(cesium@1.146.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1):
     dependencies:

@@ -2,9 +2,9 @@ import { injectable, registry } from "tsyringe";
 import { Logger as PinoLogger } from "pino";
 
 import { createBasePinoLogger } from "./pino-config.js";
-import { TOKENS } from "@/core/di/tokens.js";
-import { LogContext } from "@/core/logging/LogContext.js";
-import { ILogger } from "@/core/logging/ILogger.js";
+import { TOKENS } from "@core/di/tokens.js";
+import { LogContext } from "@core/logging/LogContext.js";
+import { ILogger } from "@core/logging/ILogger.js";
 
 /**
  * App Logger used to log business
