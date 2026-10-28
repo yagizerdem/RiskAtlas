@@ -1,10 +1,10 @@
-import { startHttp } from "@infrastructure/httpServer.js";
+import { startHttp } from "@infrastructure/http-server.js";
 
 async function main() {
   try {
-    await autoRegister({
-      container, // optionnel, par défaut c’est le rootContainer
-    });
+    // await autoRegister({
+    //   container, // optionnel, par défaut c’est le rootContainer
+    // });
     await startHttp();
   } catch (err) {
     console.error("Fatal startup 2 error:", err);
