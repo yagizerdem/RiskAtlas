@@ -1,0 +1,20 @@
+{
+  "name": "@riskatlas/shared",
+  "version": "1.0.0",
+  "description": "Shared utilities and types for RiskAtlas project",
+  "keywords": [],
+  "author": "riskatlas",
+  "license": "ISC",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.15.0",
+      "onFail": "download"
+    }
+  },
+  "packageManager": "pnpm@12.15.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js"
+  }
+}
