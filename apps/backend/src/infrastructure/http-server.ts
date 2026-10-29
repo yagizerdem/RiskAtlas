@@ -14,8 +14,6 @@ import { attachRequestLogger } from "./http/middleware/request-logger.middleware
 import { connectDb } from "@infrastructure/db/db.js";
 import { isPortAvailable } from "@infrastructure/util/port-util.js";
 import mongoose from "mongoose";
-import "@infrastructure/logging/pino-app-logger.registry.js";
-import "@infrastructure/logging/pino-http-request-logger.registry.js";
 import { HttpStatusCode } from "@riskatlas/shared";
 import swaggerUi from "swagger-ui-express";
 import swaggerJSDoc from "swagger-jsdoc";
@@ -84,7 +82,7 @@ export async function createApp() {
   // // User Routes
   const { authRouter } =
     await import("@modules/auth/infrastructure/http/auth.route.js");
-  app.use("/auth", authRouter);
+  app.use("/api/auth", authRouter);
 
   // // Project Routes
   // const { projectRouter } =
