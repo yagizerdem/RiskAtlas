@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { AuthController } from "@modules/auth/infrastructure/http/auth.controller.js";
 import { validateRequest } from "@infrastructure/http/middleware/validateRequest.js";
-import { createUserSchema } from "@modules/auth/infrastructure/http/dtos/create-user-dto.js";
+import { createUserSchema } from "@riskatlas/shared/auth";
 import { asyncWrapper } from "@infrastructure/util/async-wrapper.js";
 
 const authRouter = Router();
