@@ -36,4 +36,6 @@ export function createUserSchema() {
   });
 }
 
-export type CreateUserDto = z.infer<ReturnType<typeof createUserSchema>>;
+export type CreateUserDto = z.infer<
+  ReturnType<typeof createUserSchema>
+>["body"];
