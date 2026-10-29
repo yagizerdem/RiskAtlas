@@ -6,7 +6,7 @@ import { setupGlobalErrorHandlers } from "@core/logging/setupGlobalErrorHandlers
 import { printStartupCli } from "@core/cli/startup-banner.js";
 import { IHttpRequestLogger } from "@infrastructure/http/interfaces/IHttpRequestLogger.js";
 import { attachRequestLogger } from "./http/middleware/request-logger.middleware.js";
-// import { errorMiddleware } from "./http/middleware/error.middleware.js";
+import { errorMiddleware } from "@infrastructure/http/middleware/error.middleware.js";
 // import { HttpSecurityBuilder } from "@/infrastructure/security/SecurityFilterChain.js";
 // import { helmetMiddleware } from "@/infrastructure/security/middleware/helmet.middleware.js";
 // import { corsMiddleware } from "@/infrastructure/security/middleware/cors.middleware.js";
@@ -89,8 +89,8 @@ export async function createApp() {
   //   await import("@/modules/project/infrastructure/http/ProjectRouter.js");
   // app.use("/projects", projectRouter);
 
-  // // 7. Middleware d’erreur
-  // app.use(errorMiddleware);
+  // Middleware d’erreur
+  app.use(errorMiddleware);
 
   return app;
 }

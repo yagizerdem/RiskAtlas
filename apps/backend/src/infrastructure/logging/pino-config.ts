@@ -11,7 +11,7 @@ export function createBasePinoLogger() {
             colorize: true,
             translateTime: "yyyy-mm-dd HH:MM:ss.l",
             ignore: "pid,hostname",
-            hideObject: true,
+            hideObject: false,
           },
         }
       : undefined,
