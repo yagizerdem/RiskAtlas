@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "rootDir": ".",
+    "paths": {
+      "@*": ["./src/*"],
+      "@modules/*": ["./src/modules/*"],
+      "@core/*": ["./src/core/*"],
+      "@types/*": ["./src/types/*"],
+      "@infrastructure/*": ["./src/infrastructure/*"],
+      "@test/*": ["./test/*"]
+    }
+  },
+  "extends": "../../tsconfig.json",
+  "include": ["src/**/*", "test/**/*"]
+}
