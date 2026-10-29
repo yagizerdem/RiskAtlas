@@ -3,7 +3,7 @@ import { IAuthRepository } from "@modules/auth/domain/Iauth-repository.js";
 import { TOKENS } from "@core/di/tokens.js";
 // import { EventBus } from "@/core/events/event-bus.js";
 import { UserAlreadyExistsError } from "@modules/auth/domain/errors/user-already-exist.js";
-import { AuthUser } from "@modules/auth/domain/auth-user.js";
+import { AuthUser, NewAuthUser } from "@modules/auth/domain/auth-user.js";
 
 @injectable()
 export class FirebaseRegisterUser {
@@ -12,7 +12,7 @@ export class FirebaseRegisterUser {
     // @inject(TOKENS.EventBus) private eventBus: EventBus,
   ) {}
 
-  async execute(authUser: AuthUser, password: string): Promise<AuthUser> {
+  async execute(authUser: NewAuthUser, password: string): Promise<AuthUser> {
     const existingUser = await this.authRepository.findByEmail(authUser.email);
     if (existingUser) {
       throw new UserAlreadyExistsError(authUser.email);

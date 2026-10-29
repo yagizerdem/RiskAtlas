@@ -1,11 +1,11 @@
 import { IAuthRepository } from "@modules/auth/domain/Iauth-repository.js";
 import { FirebaseAuthError, getAuth } from "firebase-admin/auth";
 import app from "@infrastructure/firebase/admin-sdk.js";
-import { AuthUser } from "@modules/auth/domain/auth-user.js";
-import { toAuthUser } from "./converter.js";
+import { AuthUser, NewAuthUser } from "@modules/auth/domain/auth-user.js";
+import { toAuthUser } from "@modules/auth/infrastructure/db/converter.js";
 
 export class FirebaseAuthRepository implements IAuthRepository {
-  async register(record: AuthUser, password: string): Promise<AuthUser> {
+  async register(record: NewAuthUser, password: string): Promise<AuthUser> {
     try {
       const userRecordFromDb = await getAuth(app).createUser({
         disabled: false,

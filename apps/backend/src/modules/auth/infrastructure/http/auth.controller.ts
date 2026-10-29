@@ -24,7 +24,6 @@ export class AuthController {
         displayName: data.userName,
         email: data.email,
         emailVerified: false,
-        uid: randomBytes(16).toString("hex"),
       },
       data.password,
     );
