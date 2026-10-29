@@ -7,7 +7,9 @@ async function main() {
     // await autoRegister({
     //   container, // optionnel, par défaut c’est le rootContainer
     // });
-    await startHttp();
+    const port: number = parseInt(process.env.PORT || "3000");
+
+    await startHttp(port);
   } catch (err) {
     console.error("Fatal startup 2 error:", err);
     process.exit(1);
