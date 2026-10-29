@@ -1,4 +1,4 @@
-import { HttpStatusCode } from "./http-status-code.js";
+import HttpStatusCode from "./http-status-code.js";
 
 export class ApiResponse<T> {
   constructor(

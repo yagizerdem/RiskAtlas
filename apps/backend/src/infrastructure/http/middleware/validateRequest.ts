@@ -2,9 +2,10 @@ import { ApiResponse, HttpStatusCode } from "@riskatlas/shared";
 import { Request, Response, NextFunction } from "express";
 import { ZodType, ZodError } from "zod";
 
-export const validateRequest = (schema: ZodType) => {
+export const validateRequest = (createSchema: () => ZodType) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const schema = createSchema();
       await schema.parseAsync({
         body: req.body,
         query: req.query,

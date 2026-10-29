@@ -8,7 +8,7 @@ const authRouter = Router();
 
 /**
  * @openapi
- * /auth/register:
+ * /api/auth/register:
  *   post:
  *     tags: [Auth]
  *     summary: Register a new user
