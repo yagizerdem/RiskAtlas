@@ -9,8 +9,6 @@ export interface AuthUser {
 
 export interface NewAuthUser {
   email: string;
-  emailVerified: boolean;
   displayName: string;
   phoneNumber?: string | undefined;
-  photoURL?: string | undefined;
 }

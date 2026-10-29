@@ -23,7 +23,7 @@ export class AuthController {
       {
         displayName: data.userName,
         email: data.email,
-        emailVerified: false,
+        phoneNumber: data.phoneNumber,
       },
       data.password,
     );

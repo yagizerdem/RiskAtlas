@@ -32,21 +32,12 @@ const authRouter = Router();
  *                 type: string
  *                 minLength: 2
  *                 example: jane_doe
- *               firstName:
+ *               phoneNumber:
  *                 type: string
- *                 minLength: 2
- *                 maxLength: 50
- *               lastName:
- *                 type: string
- *                 minLength: 2
- *                 maxLength: 50
- *               age:
- *                 type: number
- *                 minimum: 0
- *                 maximum: 150
- *               gender:
- *                 type: string
- *                 enum: [male, female, other]
+ *                 minLength: 10
+ *                 maxLength: 15
+ *                 example: +1234567890
+ *
  *     responses:
  *       200:
  *         description: User registered successfully

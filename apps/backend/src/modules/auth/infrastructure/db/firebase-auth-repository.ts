@@ -10,10 +10,8 @@ export class FirebaseAuthRepository implements IAuthRepository {
       const userRecordFromDb = await getAuth(app).createUser({
         disabled: false,
         email: record.email,
-        emailVerified: record.emailVerified,
         displayName: record.displayName,
         phoneNumber: record.phoneNumber,
-        photoURL: record.photoURL,
         password: password,
       });
 
