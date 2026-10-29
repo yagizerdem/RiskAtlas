@@ -17,6 +17,9 @@ import mongoose from "mongoose";
 import "@infrastructure/logging/pino-app-logger.registry.js";
 import "@infrastructure/logging/pino-http-request-logger.registry.js";
 import { HttpStatusCode } from "@riskatlas/shared";
+import swaggerUi from "swagger-ui-express";
+import swaggerJSDoc from "swagger-jsdoc";
+import { options } from "./swagger/options.js";
 
 export async function createApp() {
   // process-level error handling setup
@@ -55,6 +58,10 @@ export async function createApp() {
 
   //  Body parsing
   app.use(express.json());
+  const specs = swaggerJSDoc(options);
+
+  // swagger
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
   //  Routes
   app.get("/", (req, res) => {
@@ -76,7 +83,7 @@ export async function createApp() {
 
   // // User Routes
   const { authRouter } =
-    await import("@modules/auth/infrastructure/http/auth-route.js");
+    await import("@modules/auth/infrastructure/http/auth.route.js");
   app.use("/auth", authRouter);
 
   // // Project Routes
@@ -90,7 +97,7 @@ export async function createApp() {
   return app;
 }
 
-export async function startHttp(port = 3000) {
+export async function startHttp(port: number) {
   const bootStart = Date.now();
   const app = await createApp();
 
