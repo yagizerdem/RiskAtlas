@@ -1,6 +1,6 @@
 import { createRoot } from "react-dom/client";
 import "@/index.css";
-import App from "@/App.tsx";
+import App from "@/app";
 import "leaflet/dist/leaflet.css"; // setup leaflet css before rendering the map
 import { BaseProvider } from "@/providers/base-provider";
 

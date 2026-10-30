@@ -1,5 +1,6 @@
 import { createContext, useContext } from "react";
 import { ThemeProvider } from "./theme-provider";
+import { BrowserRouter } from "react-router";
 
 type BaseProviderProps = {
   children: React.ReactNode;

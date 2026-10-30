@@ -1,5 +1,6 @@
-import LeafletMap2D from "./components/2Dmap";
+import { RouterProvider } from "react-router";
+import router from "@/router";
 
 export default function App() {
-  return <LeafletMap2D />;
+  return <RouterProvider router={router} />;
 }
