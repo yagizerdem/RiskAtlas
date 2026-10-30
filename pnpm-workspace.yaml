@@ -6,3 +6,10 @@ allowBuilds:
   "@scarf/scarf": false
   esbuild: true
   protobufjs: true
+packageExtensions:
+  react-leaflet:
+    peerDependencies:
+      "@types/leaflet": "*"
+  "@react-leaflet/core":
+    peerDependencies:
+      "@types/leaflet": "*"

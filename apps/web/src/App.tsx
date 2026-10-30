@@ -1,3 +1,5 @@
+import LeafletMap2D from "./components/2Dmap";
+
 export default function App() {
-  return <div>RiskAtlas App</div>;
+  return <LeafletMap2D />;
 }
