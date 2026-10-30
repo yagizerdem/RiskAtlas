@@ -1,4 +1,4 @@
-import LeafletMap2D from "@/components/2d-map";
+import LeafletMap2D from "@components/2d-map/2d-map";
 
 export default function HomePage() {
   return (

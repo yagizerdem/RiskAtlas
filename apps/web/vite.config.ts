@@ -12,7 +12,13 @@ const cesium = ((cesiumImport as unknown as { default?: typeof cesiumImport })
 export default defineConfig({
   plugins: [react(), tailwindcss(), cesium()],
   resolve: {
-    alias: { "@": path.resolve(import.meta.dirname, "src") },
+    alias: {
+      "@": path.resolve(import.meta.dirname, "src"),
+      "@components": path.resolve(import.meta.dirname, "src/components"),
+      "@lib": path.resolve(import.meta.dirname, "src/lib"),
+      "@assets": path.resolve(import.meta.dirname, "src/assets"),
+      "@providers": path.resolve(import.meta.dirname, "src/providers"),
+    },
   },
   server: {
     port: 5000,
