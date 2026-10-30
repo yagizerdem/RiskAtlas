@@ -1,6 +1,7 @@
 import Particles, { ParticlesProvider } from "@tsparticles/react";
 import type { Engine, ISourceOptions } from "@tsparticles/engine";
 import { loadSlim } from "@tsparticles/slim";
+import merge from "deepmerge";
 
 // must be stable across renders, ParticlesProvider throws otherwise
 const initEngine = async (engine: Engine) => {
@@ -34,16 +35,20 @@ const options: ISourceOptions = {
   },
 };
 
+export interface ParticlesBackgroundProps {
+  className?: string;
+  options?: Partial<ISourceOptions>;
+}
+
 export default function ParticlesBackground({
   className,
-}: {
-  className?: string;
-}) {
+  options: userOptions,
+}: ParticlesBackgroundProps) {
   return (
     <ParticlesProvider init={initEngine}>
       <Particles
         id="particles-background"
-        options={options}
+        options={merge(options, userOptions || {})}
         className={className}
       />
     </ParticlesProvider>
