@@ -4,6 +4,7 @@ packages:
 allowBuilds:
   "@firebase/util": true
   "@scarf/scarf": false
+  "@tsparticles/engine": false
   esbuild: true
   protobufjs: true
 packageExtensions:
