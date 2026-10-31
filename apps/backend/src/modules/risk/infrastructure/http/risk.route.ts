@@ -3,13 +3,8 @@ import { RiskController } from "@modules/risk/infrastructure/http/risk.controlle
 import { validateRequest } from "@infrastructure/http/middleware/validateRequest.js";
 import { fireRiskQuerySchema } from "@riskatlas/shared/risk";
 import { asyncWrapper } from "@infrastructure/util/async-wrapper.js";
-import { corsMiddleware } from "@infrastructure/security/middleware/cors.middleware.js";
 
 const riskRouter = Router();
-
-// The global security chain is still commented out; open CORS only for this
-// read-only router so the web app (another port) can call it.
-riskRouter.use(corsMiddleware());
 
 /**
  * @openapi
