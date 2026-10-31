@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { createLoginSchema, type LoginDto } from "@riskatlas/shared/auth";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -29,6 +29,8 @@ import { handleFirebaseError } from "@/error/handle-firebase-error";
 import { useDispatch } from "react-redux";
 import { setIsLoggedIn } from "@store/auth/slice/auth-slice";
 import { toast } from "sonner";
+import { flash } from "@/lib/camera-flash-effect";
+import { sleep } from "@/lib/sleep";
 
 const loginSchema = createLoginSchema().shape.body;
 
@@ -69,6 +71,7 @@ export default function LoginPage() {
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
@@ -107,7 +110,18 @@ export default function LoginPage() {
 
       console.log(authResult);
       dispatch(setIsLoggedIn(true));
-      toast.success("Successfully signed in", { position: "top-right" });
+      toast.success("Successfully signed in", {
+        position: "top-right",
+        duration: 5000,
+      });
+      flash({
+        initialOpacity: 1,
+        finalOpacity: 0.4,
+        duration: 800,
+      }).then(async () => {
+        await sleep(800);
+        navigate("/");
+      });
     } catch (error) {
       let message = "";
       if (error instanceof FirebaseError) {
