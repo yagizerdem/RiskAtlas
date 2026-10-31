@@ -34,6 +34,7 @@ export async function createApp() {
   const securityFilterChain = new HttpSecurityBuilder()
     .addFilter(helmetMiddleware())
     .addFilter(corsMiddleware())
+    // default rate limiting settings, can be overridden with custom options inside each spesific route
     .addFilter(rateLimitMiddleware())
     .authorizeHttpRequests((auth) => {
       // development routes
@@ -41,9 +42,7 @@ export async function createApp() {
       auth.requestMatchers("/error").permitAll();
 
       // production routes
-      auth.requestMatchers("/api/auth/**").permitAll(); // Public for demo
-      auth.requestMatchers("/greet/*").permitAll(); // Public for demo
-      auth.requestMatchers("/admin/**").authenticated(); // Example
+      auth.requestMatchers("/api/auth/**").permitAll();
     })
     .build();
 
