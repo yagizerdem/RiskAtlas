@@ -26,8 +26,6 @@ import { app as firebaseApp } from "@/lib/firebase";
 import { cn } from "cn";
 import { FirebaseError } from "firebase/app";
 import { handleFirebaseError } from "@/error/handle-firebase-error";
-import { useDispatch } from "react-redux";
-import { setIsLoggedIn } from "@store/auth/slice/auth-slice";
 import { toast } from "sonner";
 import { flash } from "@/lib/camera-flash-effect";
 import { sleep } from "@/lib/sleep";
@@ -73,8 +71,6 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const dispatch = useDispatch();
-
   const handleChange =
     (field: FormInput) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const next = { ...values, [field]: e.target.value };
@@ -109,7 +105,6 @@ export default function LoginPage() {
       );
 
       console.log(authResult);
-      dispatch(setIsLoggedIn(true));
       toast.success("Successfully signed in", {
         position: "top-right",
         duration: 5000,
