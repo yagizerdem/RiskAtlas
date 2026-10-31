@@ -26,6 +26,9 @@ import { app as firebaseApp } from "@/lib/firebase";
 import { cn } from "cn";
 import { FirebaseError } from "firebase/app";
 import { handleFirebaseError } from "@/error/handle-firebase-error";
+import { useDispatch } from "react-redux";
+import { setIsLoggedIn } from "@store/auth/slice/auth-slice";
+import { toast } from "sonner";
 
 const loginSchema = createLoginSchema().shape.body;
 
@@ -67,6 +70,8 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const dispatch = useDispatch();
+
   const handleChange =
     (field: FormInput) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const next = { ...values, [field]: e.target.value };
@@ -101,6 +106,8 @@ export default function LoginPage() {
       );
 
       console.log(authResult);
+      dispatch(setIsLoggedIn(true));
+      toast.success("Successfully signed in", { position: "top-right" });
     } catch (error) {
       let message = "";
       if (error instanceof FirebaseError) {
@@ -108,6 +115,8 @@ export default function LoginPage() {
       } else {
         message = "An unknown error occurred";
       }
+
+      toast.error(message, { position: "top-right" });
 
       setServerErrors((prev) => [...(prev ?? []), { message }]);
     } finally {
@@ -119,31 +128,22 @@ export default function LoginPage() {
 
   return (
     <div className="flex h-full w-full items-center justify-center p-4">
-      <Card className="w-full max-w-sm bg-background/80 backdrop-blur-md border border-primary">
+      <Card className="w-full max-w-sm bg-background/80 backdrop-blur-md border border-primary shadow-[0_0_40px_-8px_var(--color-primary)]">
         <CardHeader>
-          <CardTitle className="text-xl">Create an account</CardTitle>
+          <CardTitle className="text-xl">Sign in</CardTitle>
           <CardDescription>
-            Join RiskAtlas to explore and track risk on the map.
+            Sign in to RiskAtlas to explore and track risk on the map.
           </CardDescription>
         </CardHeader>
 
         <form onSubmit={handleSubmit} noValidate>
           <CardContent>
             <FieldGroup>
-              {/* {serverError && (
-                <Alert variant="destructive">
-                  <AlertTitle>{serverError.message}</AlertTitle>
-                  {serverError.issues.length > 0 && (
-                    <AlertDescription>
-                      <ul className="list-inside list-disc">
-                        {serverError.issues.map((issue) => (
-                          <li key={issue}>{issue}</li>
-                        ))}
-                      </ul>
-                    </AlertDescription>
-                  )}
+              {serverErrors?.map((error, index) => (
+                <Alert key={index} variant="destructive">
+                  <AlertTitle>{error.message}</AlertTitle>
                 </Alert>
-              )} */}
+              ))}
 
               <Field data-invalid={!!formErrors.email}>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -194,10 +194,6 @@ export default function LoginPage() {
                 )}
               </Field>
             </FieldGroup>
-
-            {serverErrors?.map((error, index) => (
-              <FieldError key={index}>{error.message}</FieldError>
-            ))}
           </CardContent>
 
           <CardFooter className="mt-6 flex-col gap-3">
