@@ -1,0 +1,435 @@
+{
+  "generatedAt": "2026-10-31",
+  "method": "burn ratio = burnt-area share / land-area share of the cell; Turkey (Natural Earth 1:50m), EFFIS MODIS burnt areas, ESA WorldCover 2021 (≈148 m), Copernicus DEM slope (≈111 m, Horn). Cells with fewer than minBurnedPx burnt pixels use the class ratio.",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "slopeBinsPct": [
+    5,
+    15,
+    25,
+    35
+  ],
+  "minBurnedPx": 25,
+  "reported": {
+    "fires": 3838,
+    "ha": 347381
+  },
+  "pixels": {
+    "land": 45703016,
+    "burned": 199306
+  },
+  "levelThresholds": {
+    "basis": "area quintiles of Turkey's land (each level = 20 %)",
+    "values": [
+      0.5527694999268448,
+      0.8444064480328681,
+      0.972709296665955,
+      1.3217789486699338
+    ]
+  },
+  "holdout": {
+    "trainYears": [
+      2022,
+      2023,
+      2024
+    ],
+    "testYear": 2025,
+    "thresholds": [
+      0.823266843697381,
+      0.8952296133271106,
+      1.1077208406895167,
+      1.3036144661185416
+    ],
+    "burnedPxShareByLevel": [
+      0.12237965212530369,
+      0.07268173120337125,
+      0.1651544795854744,
+      0.40786050611683256,
+      0.23192363096901808
+    ],
+    "landShareByLevel": [
+      0.1828319163881876,
+      0.18737470192339167,
+      0.18531945462855232,
+      0.24018375505021375,
+      0.20429017200965469
+    ],
+    "note": "share of test-year burnt area per level (very low → very high) vs the land share of that level; equal shares would mean no skill"
+  },
+  "classes": {
+    "10": {
+      "areaPx": 11490739,
+      "burnedPx": 76141,
+      "ratio": 1.5194804043757122,
+      "bySlope": [
+        {
+          "areaPx": 789906,
+          "burnedPx": 4481,
+          "ratio": 1.3008404075689317,
+          "used": 1.3008404075689317
+        },
+        {
+          "areaPx": 2769478,
+          "burnedPx": 23260,
+          "ratio": 1.925911286898973,
+          "used": 1.925911286898973
+        },
+        {
+          "areaPx": 2987080,
+          "burnedPx": 23085,
+          "ratio": 1.7721786999484836,
+          "used": 1.7721786999484836
+        },
+        {
+          "areaPx": 2216257,
+          "burnedPx": 13757,
+          "ratio": 1.4234037462768523,
+          "used": 1.4234037462768523
+        },
+        {
+          "areaPx": 2724734,
+          "burnedPx": 11558,
+          "ratio": 0.972709296665955,
+          "used": 0.972709296665955
+        }
+      ]
+    },
+    "20": {
+      "areaPx": 257306,
+      "burnedPx": 6119,
+      "ratio": 5.453245219462833,
+      "bySlope": [
+        {
+          "areaPx": 18120,
+          "burnedPx": 402,
+          "ratio": 5.0873585513918735,
+          "used": 5.0873585513918735
+        },
+        {
+          "areaPx": 47857,
+          "burnedPx": 1385,
+          "ratio": 6.636342478293319,
+          "used": 6.636342478293319
+        },
+        {
+          "areaPx": 60078,
+          "burnedPx": 1803,
+          "ratio": 6.881842796862047,
+          "used": 6.881842796862047
+        },
+        {
+          "areaPx": 52185,
+          "burnedPx": 1119,
+          "ratio": 4.91709825159991,
+          "used": 4.91709825159991
+        },
+        {
+          "areaPx": 79066,
+          "burnedPx": 1410,
+          "ratio": 4.089345757905803,
+          "used": 4.089345757905803
+        }
+      ]
+    },
+    "30": {
+      "areaPx": 19431009,
+      "burnedPx": 82084,
+      "ratio": 0.9686963120633703,
+      "bySlope": [
+        {
+          "areaPx": 2279092,
+          "burnedPx": 13137,
+          "ratio": 1.3217789486699338,
+          "used": 1.3217789486699338
+        },
+        {
+          "areaPx": 6575731,
+          "burnedPx": 31813,
+          "ratio": 1.1093921135932128,
+          "used": 1.1093921135932128
+        },
+        {
+          "areaPx": 4798442,
+          "burnedPx": 19640,
+          "ratio": 0.9385679528648122,
+          "used": 0.9385679528648122
+        },
+        {
+          "areaPx": 2586380,
+          "burnedPx": 9524,
+          "ratio": 0.8444064480328681,
+          "used": 0.8444064480328681
+        },
+        {
+          "areaPx": 2769242,
+          "burnedPx": 7478,
+          "ratio": 0.6192257938899722,
+          "used": 0.6192257938899722
+        }
+      ]
+    },
+    "40": {
+      "areaPx": 11628816,
+      "burnedPx": 31509,
+      "ratio": 0.6213318391851678,
+      "bySlope": [
+        {
+          "areaPx": 7773683,
+          "burnedPx": 18739,
+          "ratio": 0.5527694999268448,
+          "used": 0.5527694999268448
+        },
+        {
+          "areaPx": 3491170,
+          "burnedPx": 11680,
+          "ratio": 0.7671783410521374,
+          "used": 0.7671783410521374
+        },
+        {
+          "areaPx": 191396,
+          "burnedPx": 1032,
+          "ratio": 1.2364351066157098,
+          "used": 1.2364351066157098
+        },
+        {
+          "areaPx": 7290,
+          "burnedPx": 38,
+          "ratio": 1.195310008307703,
+          "used": 1.195310008307703
+        },
+        {
+          "areaPx": 514,
+          "burnedPx": 1,
+          "ratio": 0.44612993859119154,
+          "used": 0.6213318391851678
+        }
+      ]
+    },
+    "50": {
+      "areaPx": 589363,
+      "burnedPx": 138,
+      "ratio": 0.05369337539708194,
+      "bySlope": [
+        {
+          "areaPx": 370690,
+          "burnedPx": 21,
+          "ratio": 0.012990710720961779,
+          "used": 0.05369337539708194
+        },
+        {
+          "areaPx": 183221,
+          "burnedPx": 76,
+          "ratio": 0.09511802643324896,
+          "used": 0.09511802643324896
+        },
+        {
+          "areaPx": 25964,
+          "burnedPx": 29,
+          "ratio": 0.2561243592913381,
+          "used": 0.2561243592913381
+        },
+        {
+          "areaPx": 4350,
+          "burnedPx": 7,
+          "ratio": 0.36900586644853045,
+          "used": 0.05369337539708194
+        },
+        {
+          "areaPx": 769,
+          "burnedPx": 5,
+          "ratio": 1.4909674150576884,
+          "used": 0.05369337539708194
+        }
+      ]
+    },
+    "60": {
+      "areaPx": 1278816,
+      "burnedPx": 551,
+      "ratio": 0.09880252079123637,
+      "bySlope": [
+        {
+          "areaPx": 347429,
+          "burnedPx": 333,
+          "ratio": 0.21978733079030688,
+          "used": 0.21978733079030688
+        },
+        {
+          "areaPx": 334101,
+          "burnedPx": 98,
+          "ratio": 0.06726246634016511,
+          "used": 0.06726246634016511
+        },
+        {
+          "areaPx": 192987,
+          "burnedPx": 57,
+          "ratio": 0.06772847363213445,
+          "used": 0.06772847363213445
+        },
+        {
+          "areaPx": 127494,
+          "burnedPx": 32,
+          "ratio": 0.057555220088379995,
+          "used": 0.057555220088379995
+        },
+        {
+          "areaPx": 238115,
+          "burnedPx": 29,
+          "ratio": 0.02792773602939883,
+          "used": 0.02792773602939883
+        }
+      ]
+    },
+    "70": {
+      "areaPx": 320,
+      "burnedPx": 0,
+      "ratio": 0,
+      "bySlope": [
+        {
+          "areaPx": 0,
+          "burnedPx": 0,
+          "ratio": null,
+          "used": 0
+        },
+        {
+          "areaPx": 4,
+          "burnedPx": 0,
+          "ratio": 0,
+          "used": 0
+        },
+        {
+          "areaPx": 13,
+          "burnedPx": 0,
+          "ratio": 0,
+          "used": 0
+        },
+        {
+          "areaPx": 20,
+          "burnedPx": 0,
+          "ratio": 0,
+          "used": 0
+        },
+        {
+          "areaPx": 83,
+          "burnedPx": 0,
+          "ratio": 0,
+          "used": 0
+        }
+      ]
+    },
+    "80": {
+      "areaPx": 991981,
+      "burnedPx": 293,
+      "ratio": 0.06773119748433754,
+      "bySlope": [
+        {
+          "areaPx": 896206,
+          "burnedPx": 263,
+          "ratio": 0.06729338718847504,
+          "used": 0.06729338718847504
+        },
+        {
+          "areaPx": 56703,
+          "burnedPx": 24,
+          "ratio": 0.0970576322674451,
+          "used": 0.06773119748433754
+        },
+        {
+          "areaPx": 17263,
+          "burnedPx": 5,
+          "ratio": 0.06641684192662703,
+          "used": 0.06773119748433754
+        },
+        {
+          "areaPx": 6332,
+          "burnedPx": 1,
+          "ratio": 0.036214590719499756,
+          "used": 0.06773119748433754
+        },
+        {
+          "areaPx": 4872,
+          "burnedPx": 0,
+          "ratio": 0,
+          "used": 0.06773119748433754
+        }
+      ]
+    },
+    "90": {
+      "areaPx": 33152,
+      "burnedPx": 2471,
+      "ratio": 17.091788073873097,
+      "bySlope": [
+        {
+          "areaPx": 32799,
+          "burnedPx": 2458,
+          "ratio": 17.184850695916783,
+          "used": 17.184850695916783
+        },
+        {
+          "areaPx": 310,
+          "burnedPx": 11,
+          "ratio": 8.136834428369669,
+          "used": 17.091788073873097
+        },
+        {
+          "areaPx": 24,
+          "burnedPx": 2,
+          "ratio": 19.109232369656038,
+          "used": 17.091788073873097
+        },
+        {
+          "areaPx": 3,
+          "burnedPx": 0,
+          "ratio": 0,
+          "used": 17.091788073873097
+        },
+        {
+          "areaPx": 1,
+          "burnedPx": 0,
+          "ratio": 0,
+          "used": 17.091788073873097
+        }
+      ]
+    },
+    "100": {
+      "areaPx": 1514,
+      "burnedPx": 0,
+      "ratio": 0,
+      "bySlope": [
+        {
+          "areaPx": 5,
+          "burnedPx": 0,
+          "ratio": 0,
+          "used": 0
+        },
+        {
+          "areaPx": 75,
+          "burnedPx": 0,
+          "ratio": 0,
+          "used": 0
+        },
+        {
+          "areaPx": 262,
+          "burnedPx": 0,
+          "ratio": 0,
+          "used": 0
+        },
+        {
+          "areaPx": 406,
+          "burnedPx": 0,
+          "ratio": 0,
+          "used": 0
+        },
+        {
+          "areaPx": 761,
+          "burnedPx": 0,
+          "ratio": 0,
+          "used": 0
+        }
+      ]
+    }
+  }
+}

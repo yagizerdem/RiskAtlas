@@ -84,6 +84,11 @@ export async function createApp() {
     await import("@modules/auth/infrastructure/http/auth.route.js");
   app.use("/api/auth", authRouter);
 
+  // Risk Routes
+  const { riskRouter } =
+    await import("@modules/risk/infrastructure/http/risk.route.js");
+  app.use("/api/risk", riskRouter);
+
   // // Project Routes
   // const { projectRouter } =
   //   await import("@/modules/project/infrastructure/http/ProjectRouter.js");
