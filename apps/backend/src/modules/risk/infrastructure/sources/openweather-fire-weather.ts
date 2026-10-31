@@ -58,6 +58,7 @@ export class OpenWeatherFireWeather implements IFireWeatherSource {
       fwi: entry.main.fwi,
       dangerClass: entry.danger_rating?.value ?? 0,
       dangerLabel: entry.danger_rating?.description ?? "unknown",
+      source: "OpenWeather Fire Weather Index API",
     };
   }
 }

@@ -38,7 +38,11 @@ export class AssessFireRisk {
 
     const fuel = fuelFor(cover.worldCoverClass);
     const weather: WeatherComponent = weatherSample
-      ? { available: true, factor: weatherFactor(weatherSample.fwi), ...weatherSample }
+      ? {
+          available: true,
+          factor: Math.round(weatherFactor(weatherSample.fwi) * 1000) / 1000,
+          ...weatherSample,
+        }
       : { available: false, reason: "Fire Weather Index unavailable" };
 
     const score = hazardScore(

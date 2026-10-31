@@ -14,9 +14,11 @@ export type LandCoverSample = {
 export type FireWeatherSample = {
   /** Canadian Fire Weather Index */
   fwi: number;
-  /** OpenWeather danger rating, 0 (very low) .. 5 (extreme) */
+  /** EFFIS / OpenWeather danger rating, 0 (very low) .. 5 (extreme) */
   dangerClass: number;
   dangerLabel: string;
+  /** where the value comes from, shown to the user */
+  source: string;
 };
 
 export type WeatherComponent =
