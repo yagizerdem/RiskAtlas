@@ -13,10 +13,10 @@ export class RiskController {
     );
 
     // validateRequest has already checked the ranges
-    const assessment = await assessFireRisk.execute({
-      lat: Number(req.query.lat),
-      lon: Number(req.query.lon),
-    });
+    const assessment = await assessFireRisk.execute(
+      { lat: Number(req.query.lat), lon: Number(req.query.lon) },
+      typeof req.query.date === "string" ? req.query.date : undefined,
+    );
 
     return res
       .status(HttpStatusCode.OK)

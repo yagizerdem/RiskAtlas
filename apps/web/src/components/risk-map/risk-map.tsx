@@ -11,7 +11,13 @@ type Probe =
 
 const IZMIR: [number, number] = [38.42, 27.14];
 
-function ClickToAssess({ onProbe }: { onProbe: (probe: Probe) => void }) {
+function ClickToAssess({
+  date,
+  onProbe,
+}: {
+  date?: string;
+  onProbe: (probe: Probe) => void;
+}) {
   const pending = useRef<AbortController | null>(null);
 
   useMapEvents({
@@ -23,7 +29,7 @@ function ClickToAssess({ onProbe }: { onProbe: (probe: Probe) => void }) {
       const position = e.latlng;
       onProbe({ status: "loading", position });
       try {
-        const risk = await fetchFireRisk(position.lat, position.lng, controller.signal);
+        const risk = await fetchFireRisk(position.lat, position.lng, date, controller.signal);
         onProbe({ status: "done", position, risk });
       } catch (err) {
         if (controller.signal.aborted) return;
@@ -35,10 +41,10 @@ function ClickToAssess({ onProbe }: { onProbe: (probe: Probe) => void }) {
   return null;
 }
 
-export default function RiskMap() {
+export default function RiskMap({ date }: { date?: string }) {
   const [probe, setProbe] = useState<Probe | null>(null);
-  const color =
-    probe?.status === "done" ? LEVEL_STYLE[probe.risk.level].color : "#64748b";
+  const level = probe?.status === "done" ? probe.risk.structural.level : null;
+  const color = level ? LEVEL_STYLE[level].color : "#64748b";
 
   return (
     <MapContainer center={IZMIR} zoom={10} className="h-full w-full">
@@ -46,7 +52,7 @@ export default function RiskMap() {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution="&copy; OpenStreetMap"
       />
-      <ClickToAssess onProbe={setProbe} />
+      <ClickToAssess date={date} onProbe={setProbe} />
       {probe && (
         <CircleMarker
           // re-mount so the popup opens again for every new click

@@ -10,13 +10,12 @@ const BASE_URL = "https://copernicus-dem-30m.s3.amazonaws.com";
 const METERS_PER_DEGREE = 111_320;
 
 /**
- * Copernicus is a surface model: buildings and trees count as terrain, so a
- * 30 m neighbourhood turns building edges into fake slopes (flat Kemeraltı
- * read 13.5°). Sampling neighbours 3 pixels (~90 m) away keeps real slopes
- * (Bozdağ ~13°) while flat city points drop to 0-4°.
+ * Overview level 2 (900 px per 1° tile, ≈111 m) — the same grid the burn rates
+ * were derived on (scripts/risk/derive-burn-rates.mjs), so slope classes match.
+ * It also smooths out buildings: Copernicus is a surface model and at 30 m a
+ * flat district (Kemeraltı) read 13.5° from building edges.
  */
-const NEIGHBOUR_STEP = 3;
-const WINDOW_SIZE = 2 * NEIGHBOUR_STEP + 1;
+const DEM_OVERVIEW = 2;
 
 /** Copernicus DEM GLO-30: 1°×1° tiles named after their south-west corner. */
 export function demTileUrl({ lat, lon }: Coordinates): string {
@@ -54,29 +53,21 @@ export class CopernicusDemTerrain implements ITerrainSource {
       demTileUrl(point),
       point.lat,
       point.lon,
-      WINDOW_SIZE,
+      3,
+      DEM_OVERVIEW,
     );
-    // No tile means open sea: flat, no elevation
-    if (!window) return { elevationM: null, slopeDeg: 0 };
+    // No tile: open sea, or areas Copernicus GLO-30 does not publish
+    // (tiles touching Armenia, e.g. parts of Iğdır, Kars, Ardahan)
+    if (!window) return { elevationM: null, slopeDeg: null };
 
+    const cellYm = window.resY * METERS_PER_DEGREE;
     const cellXm =
-      window.resX *
-      NEIGHBOUR_STEP *
-      METERS_PER_DEGREE *
-      Math.cos((point.lat * Math.PI) / 180);
-    const cellYm = window.resY * NEIGHBOUR_STEP * METERS_PER_DEGREE;
-
-    // corners, edge midpoints and centre of the 7×7 window, row by row
-    const at = (row: number, col: number) =>
-      window.values[row * WINDOW_SIZE + col]!;
-    const s = NEIGHBOUR_STEP;
-    const ring = [0, s, 2 * s].flatMap((row) =>
-      [0, s, 2 * s].map((col) => at(row, col)),
-    );
+      window.resX * METERS_PER_DEGREE * Math.cos((point.lat * Math.PI) / 180);
 
     return {
-      elevationM: Math.round(at(s, s) * 10) / 10,
-      slopeDeg: Math.round(hornSlopeDeg(ring, cellXm, cellYm) * 10) / 10,
+      elevationM: Math.round(window.values[4]! * 10) / 10,
+      slopeDeg:
+        Math.round(hornSlopeDeg(window.values, cellXm, cellYm) * 10) / 10,
     };
   }
 }

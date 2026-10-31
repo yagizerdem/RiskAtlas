@@ -4,13 +4,19 @@ import {
   ILandCoverSource,
   LandCoverSample,
 } from "@modules/risk/domain/fire-risk.js";
-import { WATER_CLASS } from "@modules/risk/domain/fuel-table.js";
 import { CogReader } from "@modules/risk/infrastructure/raster/cog-reader.js";
 
 const BASE_URL =
   "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map";
 
-/** ESA WorldCover 2021 (10 m): 3°×3° tiles named after their south-west corner. */
+/**
+ * Overview level 4 (2250 px per 3° tile, ≈148 m) — the same grid the burn rates
+ * were derived on (scripts/risk/derive-burn-rates.mjs).
+ */
+const WORLD_COVER_OVERVIEW = 4;
+const WATER_CLASS = 80;
+
+/** ESA WorldCover 2021: 3°×3° tiles named after their south-west corner. */
 export function worldCoverTileUrl({ lat, lon }: Coordinates): string {
   const latFloor = Math.floor(lat / 3) * 3;
   const lonFloor = Math.floor(lon / 3) * 3;
@@ -29,6 +35,7 @@ export class EsaWorldCoverLandCover implements ILandCoverSource {
       point.lat,
       point.lon,
       1,
+      WORLD_COVER_OVERVIEW,
     );
     const value = window?.values[0] ?? 0;
     // 0 = no data, which is open sea; missing tile = open ocean

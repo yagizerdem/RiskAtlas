@@ -18,13 +18,20 @@ type FwiResponse = {
 
 /**
  * OpenWeather Fire Weather Index API. Access must be granted by OpenWeather
- * by email; until then it answers 401 and the risk falls back to static mode.
+ * by email; until then it answers 401. Not registered by default, see risk.registry.ts.
  */
 @injectable()
 export class OpenWeatherFireWeather implements IFireWeatherSource {
   constructor(@inject(TOKENS.Logger) private readonly logger: ILogger) {}
 
-  async sample({ lat, lon }: Coordinates): Promise<FireWeatherSample | null> {
+  async sample(
+    { lat, lon }: Coordinates,
+    date?: string,
+  ): Promise<FireWeatherSample | null> {
+    const today = new Date().toISOString().slice(0, 10);
+    // the API only serves the current day (and a forecast), not past dates
+    if (date && date !== today) return null;
+
     const apiKey = process.env.OPENWEATHER_API_KEY;
     if (!apiKey) {
       this.logger.warn("OPENWEATHER_API_KEY is not set", {
@@ -58,6 +65,7 @@ export class OpenWeatherFireWeather implements IFireWeatherSource {
       fwi: entry.main.fwi,
       dangerClass: entry.danger_rating?.value ?? 0,
       dangerLabel: entry.danger_rating?.description ?? "unknown",
+      date: today,
       source: "OpenWeather Fire Weather Index API",
     };
   }

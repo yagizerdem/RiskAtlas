@@ -21,7 +21,6 @@ const HOURLY = "temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation
  * rains in Turkey leave the fuels wet, which is what start-up values assume.
  */
 const SEASON_START_MONTH = 3;
-const MIN_DAYS = 30;
 
 /** Open-Meteo grid is ~10 km; one weather series per 0.1° cell per hour. */
 const CACHE_TTL_MS = 60 * 60 * 1000;
@@ -94,15 +93,19 @@ export class OpenMeteoComputedFireWeather implements IFireWeatherSource {
 
   constructor(@inject(TOKENS.Logger) private readonly logger: ILogger) {}
 
-  async sample({ lat, lon }: Coordinates): Promise<FireWeatherSample | null> {
+  async sample(
+    { lat, lon }: Coordinates,
+    date?: string,
+  ): Promise<FireWeatherSample | null> {
+    const target = date ?? new Date().toISOString().slice(0, 10);
     const cellLat = Math.round(lat * 10) / 10;
     const cellLon = Math.round(lon * 10) / 10;
-    const key = `${cellLat},${cellLon}`;
+    const key = `${cellLat},${cellLon},${target}`;
 
     const cached = this.cache.get(key);
     if (cached && Date.now() - cached.at < CACHE_TTL_MS) return cached.value;
 
-    const value = await this.compute(cellLat, cellLon);
+    const value = await this.compute(cellLat, cellLon, target);
     // keep failures uncached so a network glitch is retried on the next click
     if (value) {
       if (this.cache.size >= CACHE_MAX) this.cache.clear();
@@ -114,11 +117,11 @@ export class OpenMeteoComputedFireWeather implements IFireWeatherSource {
   private async compute(
     lat: number,
     lon: number,
+    target: string,
   ): Promise<FireWeatherSample | null> {
-    const today = new Date();
     const url =
       `${ARCHIVE_URL}?latitude=${lat}&longitude=${lon}` +
-      `&start_date=${seasonStart(today)}&end_date=${today.toISOString().slice(0, 10)}` +
+      `&start_date=${seasonStart(new Date(`${target}T00:00:00Z`))}&end_date=${target}` +
       `&hourly=${HOURLY}&timezone=auto`;
 
     let hourly: Hourly;
@@ -139,8 +142,8 @@ export class OpenMeteoComputedFireWeather implements IFireWeatherSource {
     }
 
     const { days, lastDate } = noonObservations(hourly, lat);
-    if (days.length < MIN_DAYS) {
-      this.logger.warn(`Only ${days.length} days of weather, need ${MIN_DAYS}`, {
+    if (lastDate !== target) {
+      this.logger.warn(`No complete noon weather for ${target}`, {
         context: "FireWeather",
       });
       return null;
@@ -152,6 +155,7 @@ export class OpenMeteoComputedFireWeather implements IFireWeatherSource {
       fwi: Math.round(latest.fwi * 10) / 10,
       dangerClass: danger.value,
       dangerLabel: danger.label,
+      date: target,
       source: `Computed (Canadian FWI, cffdrs equations) from Open-Meteo weather, ${days.length} days to ${lastDate}`,
     };
   }

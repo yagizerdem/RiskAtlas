@@ -6,19 +6,19 @@ import {
   IFireWeatherSource,
   ILandCoverSource,
   ITerrainSource,
-  WeatherComponent,
 } from "@modules/risk/domain/fire-risk.js";
-import { fuelFor } from "@modules/risk/domain/fuel-table.js";
 import {
-  FORMULA_DYNAMIC,
-  FORMULA_STATIC,
-  hazardScore,
-  levelFor,
-  slopeFactor,
-  weatherFactor,
-} from "@modules/risk/domain/risk-formula.js";
+  burnRatio,
+  structuralLevel,
+  WORLD_COVER_LABELS,
+} from "@modules/risk/domain/burn-rates.js";
 
-/** Fire hazard at a point = weather × fuel × slope (see risk-formula.ts). */
+/**
+ * Two separate answers for a point:
+ * - structural: how often this land cover × slope burned in Turkey (real burnt areas)
+ * - weather: the fire weather danger of the day (Canadian FWI, EFFIS classes)
+ * They are not merged into one number: no calibrated link between the two exists yet.
+ */
 @injectable()
 export class AssessFireRisk {
   constructor(
@@ -29,42 +29,36 @@ export class AssessFireRisk {
     private readonly fireWeather: IFireWeatherSource,
   ) {}
 
-  async execute(point: Coordinates): Promise<FireRiskAssessment> {
-    const [terrain, cover, weatherSample] = await Promise.all([
+  async execute(
+    point: Coordinates,
+    date?: string,
+  ): Promise<FireRiskAssessment> {
+    const [terrain, cover, weather] = await Promise.all([
       this.terrain.sample(point),
       this.landCover.sample(point),
-      this.fireWeather.sample(point),
+      this.fireWeather.sample(point, date),
     ]);
 
-    const fuel = fuelFor(cover.worldCoverClass);
-    const weather: WeatherComponent = weatherSample
-      ? {
-          available: true,
-          factor: Math.round(weatherFactor(weatherSample.fwi) * 1000) / 1000,
-          ...weatherSample,
-        }
-      : { available: false, reason: "Fire Weather Index unavailable" };
-
-    const score = hazardScore(
-      fuel.flammability,
-      terrain.slopeDeg,
-      weather.available ? weather.factor : null,
-    );
+    const ratio = burnRatio(cover.worldCoverClass, terrain.slopeDeg);
+    const slopePct =
+      terrain.slopeDeg === null
+        ? null
+        : Math.round(Math.tan((terrain.slopeDeg * Math.PI) / 180) * 1000) / 10;
 
     return {
       location: point,
-      score,
-      level: levelFor(score),
-      mode: weather.available ? "dynamic" : "static",
-      components: {
-        weather,
-        fuel: { ...cover, ...fuel },
-        terrain: {
-          ...terrain,
-          slopeFactor: Math.round(slopeFactor(terrain.slopeDeg) * 100) / 100,
+      structural: {
+        burnRatio: ratio === null ? null : Math.round(ratio * 100) / 100,
+        level: ratio === null ? null : structuralLevel(ratio),
+        landCover: {
+          ...cover,
+          label: WORLD_COVER_LABELS[cover.worldCoverClass] ?? "Unknown",
         },
+        terrain: { ...terrain, slopePct },
       },
-      formula: weather.available ? FORMULA_DYNAMIC : FORMULA_STATIC,
+      weather: weather
+        ? { available: true, ...weather }
+        : { available: false, reason: "Fire weather unavailable for this day" },
     };
   }
 }

@@ -1,24 +1,37 @@
 import { fromUrl, GeoTIFFImage } from "geotiff";
 
+type OpenImage = {
+  image: GeoTIFFImage;
+  /** [minLon, minLat, maxLon, maxLat] of the tile */
+  bbox: [number, number, number, number];
+};
+
 /**
  * Reads small pixel windows from Cloud Optimized GeoTIFFs over HTTPS.
  * Only the needed byte ranges are downloaded, not the whole tile.
- * Opened images are cached per URL; a missing tile (404) is cached as null.
+ * Opened images are cached per URL and overview; a missing tile is cached as null.
  */
 export class CogReader {
-  private readonly images = new Map<string, Promise<GeoTIFFImage | null>>();
+  private readonly images = new Map<string, Promise<OpenImage | null>>();
 
-  private open(url: string): Promise<GeoTIFFImage | null> {
-    let image = this.images.get(url);
+  /** overview 0 = full resolution, 1 = half, 2 = quarter, ... */
+  private open(url: string, overview: number): Promise<OpenImage | null> {
+    const key = `${overview}|${url}`;
+    let image = this.images.get(key);
     if (!image) {
-      image = fromUrl(url)
-        .then((tiff) => tiff.getImage())
-        .catch((err: unknown) => {
-          if (String(err).includes("404")) return null;
-          this.images.delete(url); // network error: retry next time
-          throw err;
-        });
-      this.images.set(url, image);
+      image = (async () => {
+        // S3 answers 403/404 for tiles that do not exist (open sea, excluded areas)
+        const head = await fetch(url, { method: "HEAD" });
+        if (head.status === 403 || head.status === 404) return null;
+        const tiff = await fromUrl(url);
+        // overview images carry no georeferencing; the full-resolution one does
+        const bbox = (await tiff.getImage(0)).getBoundingBox() as OpenImage["bbox"];
+        return { image: await tiff.getImage(overview), bbox };
+      })().catch((err: unknown) => {
+        this.images.delete(key); // network error: retry next time
+        throw err;
+      });
+      this.images.set(key, image);
     }
     return image;
   }
@@ -32,16 +45,13 @@ export class CogReader {
     lat: number,
     lon: number,
     size: number,
+    overview = 0,
   ): Promise<{ values: number[]; resX: number; resY: number } | null> {
-    const image = await this.open(url);
-    if (!image) return null;
+    const opened = await this.open(url, overview);
+    if (!opened) return null;
 
-    const [minX, minY, maxX, maxY] = image.getBoundingBox() as [
-      number,
-      number,
-      number,
-      number,
-    ];
+    const { image } = opened;
+    const [minX, minY, maxX, maxY] = opened.bbox;
     const width = image.getWidth();
     const height = image.getHeight();
 

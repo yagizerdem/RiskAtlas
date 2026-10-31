@@ -16,11 +16,13 @@ riskRouter.use(corsMiddleware());
  * /api/risk:
  *   get:
  *     tags: [Risk]
- *     summary: Fire hazard score for a point (weather × fuel × slope)
+ *     summary: Structural fire risk and fire weather danger for a point
  *     description: >
- *       Combines OpenWeather Fire Weather Index (weather), ESA WorldCover
- *       land cover (fuel) and Copernicus DEM slope. When FWI is unavailable
- *       the score is computed from fuel and slope only (mode = static).
+ *       structural = how often this land cover (ESA WorldCover) and slope
+ *       (Copernicus DEM) burned in Turkey, from EFFIS burnt areas 2022-2025
+ *       (1 = Turkish average); level = Turkey land area quintile.
+ *       weather = Canadian Fire Weather Index for the day, computed from
+ *       Open-Meteo weather, with EFFIS danger classes.
  *     parameters:
  *       - in: query
  *         name: lat
@@ -38,6 +40,14 @@ riskRouter.use(corsMiddleware());
  *           minimum: -180
  *           maximum: 180
  *           example: 27.13
+ *       - in: query
+ *         name: date
+ *         required: false
+ *         description: Day for the fire weather (YYYY-MM-DD, from 1940 to today). Defaults to today.
+ *         schema:
+ *           type: string
+ *           format: date
+ *           example: 2025-06-29
  *     responses:
  *       200:
  *         description: Fire risk assessed
@@ -55,19 +65,17 @@ riskRouter.use(corsMiddleware());
  *                 data:
  *                   type: object
  *                   properties:
- *                     score:
- *                       type: number
- *                       example: 42.5
- *                     level:
- *                       type: string
- *                       enum: [very_low, low, moderate, high, very_high]
- *                     mode:
- *                       type: string
- *                       enum: [dynamic, static]
- *                     components:
+ *                     structural:
  *                       type: object
- *                     formula:
- *                       type: string
+ *                       properties:
+ *                         burnRatio:
+ *                           type: number
+ *                           example: 1.93
+ *                         level:
+ *                           type: string
+ *                           enum: [very_low, low, moderate, high, very_high]
+ *                     weather:
+ *                       type: object
  *       400:
  *         description: Validation failed
  */
