@@ -17,7 +17,7 @@ import mongoose from "mongoose";
 import { HttpStatusCode } from "@riskatlas/shared";
 import swaggerUi from "swagger-ui-express";
 import swaggerJSDoc from "swagger-jsdoc";
-import { options } from "./swagger/options.js";
+import { options } from "@infrastructure/swagger/options.js";
 
 export async function createApp() {
   // process-level error handling setup
