@@ -7,10 +7,10 @@ import { printStartupCli } from "@core/cli/startup-banner.js";
 import { IHttpRequestLogger } from "@infrastructure/http/interfaces/IHttpRequestLogger.js";
 import { attachRequestLogger } from "./http/middleware/request-logger.middleware.js";
 import { errorMiddleware } from "@infrastructure/http/middleware/error.middleware.js";
-// import { HttpSecurityBuilder } from "@/infrastructure/security/SecurityFilterChain.js";
-// import { helmetMiddleware } from "@/infrastructure/security/middleware/helmet.middleware.js";
-// import { corsMiddleware } from "@/infrastructure/security/middleware/cors.middleware.js";
-// import { rateLimitMiddleware } from "@/infrastructure/security/middleware/rateLimit.middleware.js";
+import { HttpSecurityBuilder } from "@infrastructure/security/security-filter-chain.js";
+import { helmetMiddleware } from "@infrastructure/security/middleware/helmet.middleware.js";
+import { corsMiddleware } from "@infrastructure/security/middleware/cors.middleware.js";
+import { rateLimitMiddleware } from "@infrastructure/security/middleware/rateLimit.middleware.js";
 import { connectDb } from "@infrastructure/db/db.js";
 import { isPortAvailable } from "@infrastructure/util/port-util.js";
 import mongoose from "mongoose";
@@ -31,20 +31,23 @@ export async function createApp() {
   app.set("trust proxy", true);
 
   // Security Filter Chain
-  // const securityFilterChain = new HttpSecurityBuilder()
-  //   .addFilter(helmetMiddleware())
-  //   .addFilter(corsMiddleware())
-  //   .addFilter(rateLimitMiddleware())
-  //   .authorizeHttpRequests((auth) => {
-  //     auth.requestMatchers("/health").permitAll();
-  //     auth.requestMatchers("/users").permitAll(); // Public for demo
-  //     auth.requestMatchers("/projects").permitAll(); // Public for demo
-  //     auth.requestMatchers("/greet/*").permitAll(); // Public for demo
-  //     auth.requestMatchers("/admin/**").authenticated(); // Example
-  //   })
-  //   .build();
+  const securityFilterChain = new HttpSecurityBuilder()
+    .addFilter(helmetMiddleware())
+    .addFilter(corsMiddleware())
+    .addFilter(rateLimitMiddleware())
+    .authorizeHttpRequests((auth) => {
+      // development routes
+      auth.requestMatchers("/health").permitAll();
+      auth.requestMatchers("/error").permitAll();
 
-  // app.use(securityFilterChain.getMiddleware());
+      // production routes
+      auth.requestMatchers("/api/auth/**").permitAll(); // Public for demo
+      auth.requestMatchers("/greet/*").permitAll(); // Public for demo
+      auth.requestMatchers("/admin/**").authenticated(); // Example
+    })
+    .build();
+
+  app.use(securityFilterChain.getMiddleware());
 
   //  HTTP logging
   const httpRequestLogger = container.resolve<IHttpRequestLogger>(
@@ -58,14 +61,12 @@ export async function createApp() {
   app.use(express.json());
   const specs = swaggerJSDoc(options);
 
-  // swagger
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+  if (process.env.NODE_ENV === "development") {
+    // swagger
+    app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+  }
 
   //  Routes
-  app.get("/", (req, res) => {
-    req.logger.info("Handling root route", { context: "RootHandler" });
-    res.send("OK");
-  });
 
   app.get("/health", (req, res) => {
     res
@@ -89,12 +90,6 @@ export async function createApp() {
     await import("@modules/risk/infrastructure/http/risk.route.js");
   app.use("/api/risk", riskRouter);
 
-  // // Project Routes
-  // const { projectRouter } =
-  //   await import("@/modules/project/infrastructure/http/ProjectRouter.js");
-  // app.use("/projects", projectRouter);
-
-  // Middleware d’erreur
   app.use(errorMiddleware);
 
   return app;

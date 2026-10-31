@@ -15,8 +15,13 @@ export type Predicate = (req: AuthenticatedRequest) => boolean;
 export const isAuthenticated: Predicate = (req) => Boolean(req.auth?.subject);
 
 export class SecurityError extends AppError {
-  constructor(message: string, statusCode: HttpStatusCode, code: MachineCode) {
-    super(message, statusCode, code);
+  constructor(
+    message: string,
+    statusCode: HttpStatusCode,
+    isOperational: boolean,
+    code: MachineCode,
+  ) {
+    super(message, statusCode, isOperational, code);
   }
 }
 
@@ -52,6 +57,7 @@ export class SecurityFilterChain {
             throw new SecurityError(
               "Forbidden",
               HttpStatusCode.FORBIDDEN,
+              true,
               MachineCode.FORBIDDEN,
             );
           }
@@ -59,6 +65,7 @@ export class SecurityFilterChain {
           throw new SecurityError(
             "Forbidden",
             HttpStatusCode.FORBIDDEN,
+            true,
             MachineCode.FORBIDDEN,
           );
         }
