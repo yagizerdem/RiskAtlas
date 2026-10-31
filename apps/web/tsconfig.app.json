@@ -22,7 +22,9 @@
       "@components/*": ["./src/components/*"],
       "@lib/*": ["./src/lib/*"],
       "@assets/*": ["./src/assets/*"],
-      "@providers/*": ["./src/providers/*"]
+      "@providers/*": ["./src/providers/*"],
+      "@store/*": ["./src/store/*"],
+      "@error/*": ["./src/error/*"]
     },
 
     /* Linting */

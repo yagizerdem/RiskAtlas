@@ -1,6 +1,7 @@
 import { createContext, useContext } from "react";
 import { ThemeProvider } from "./theme-provider";
-import { BrowserRouter } from "react-router";
+import { Provider as ReduxProvider } from "react-redux";
+import { store as authStore } from "@/store/auth/auth-store";
 
 type BaseProviderProps = {
   children: React.ReactNode;
@@ -19,9 +20,11 @@ export function BaseProvider({ children, ...props }: BaseProviderProps) {
 
   return (
     <ThemeProvider>
-      <BaseProviderContext.Provider {...props} value={value}>
-        {children}
-      </BaseProviderContext.Provider>
+      <ReduxProvider store={authStore}>
+        <BaseProviderContext.Provider {...props} value={value}>
+          {children}
+        </BaseProviderContext.Provider>
+      </ReduxProvider>
     </ThemeProvider>
   );
 }

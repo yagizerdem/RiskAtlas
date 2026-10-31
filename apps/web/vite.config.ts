@@ -18,6 +18,8 @@ export default defineConfig({
       "@lib": path.resolve(import.meta.dirname, "src/lib"),
       "@assets": path.resolve(import.meta.dirname, "src/assets"),
       "@providers": path.resolve(import.meta.dirname, "src/providers"),
+      "@store": path.resolve(import.meta.dirname, "src/store"),
+      "@error": path.resolve(import.meta.dirname, "src/error"),
     },
   },
   server: {
