@@ -30,7 +30,17 @@ export async function createApp() {
   console.log(`Database connection state: ${mongoose.connection.readyState}`);
 
   const app = express();
+
   app.set("trust proxy", true);
+
+  //  HTTP logging
+  const httpRequestLogger = container.resolve<IHttpRequestLogger>(
+    TOKENS.HttpRequestLogger,
+  );
+
+  app.use(httpRequestLogger.getMiddleware());
+
+  app.use(attachRequestLogger);
 
   app.use(cookieParser());
   app.use(firebaseAuthenticationMiddleware());
@@ -47,20 +57,12 @@ export async function createApp() {
       auth.requestMatchers("/error").permitAll();
 
       // production routes
-      auth.requestMatchers("/api/auth/**").permitAll();
-      auth.requestMatchers("/api/risk/**").authenticated();
+      auth.requestMatchers("/api/auth").permitAll();
+      auth.requestMatchers("/api/risk").authenticated();
     })
     .build();
 
   app.use(securityFilterChain.getMiddleware());
-
-  //  HTTP logging
-  const httpRequestLogger = container.resolve<IHttpRequestLogger>(
-    TOKENS.HttpRequestLogger,
-  );
-  app.use(httpRequestLogger.getMiddleware());
-
-  app.use(attachRequestLogger);
 
   //  Body parsing
   app.use(express.json());
