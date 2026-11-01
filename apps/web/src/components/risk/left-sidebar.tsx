@@ -1,7 +1,53 @@
+import { useDispatch, useSelector } from "react-redux";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/components/ui/field";
+import {
+  selectMapOptions,
+  setMapOptions,
+  type MapOptions,
+} from "@/store/slice/risk-map-slice";
+
+const LAYERS: { key: keyof MapOptions; label: string }[] = [
+  { key: "humanSettlementLayer", label: "Settlement areas" },
+  { key: "protectedAreasLayer", label: "Protected areas" },
+  { key: "corineLandcoverLayer", label: "CORINE land cover" },
+  { key: "fuelsLayer", label: "Fuel types" },
+];
+
 export function LeftSidebar() {
+  const mapOptions = useSelector(selectMapOptions);
+  const dispatch = useDispatch();
+
+  function handleLayerChange(key: keyof MapOptions, checked: boolean) {
+    dispatch(setMapOptions({ [key]: checked }));
+  }
+
   return (
-    <div className="w-full h-full flex flex-col bg-background">
-      Left Sidebar
+    <div className="flex h-full w-full flex-col gap-4 overflow-y-auto bg-background p-4">
+      <FieldSet>
+        <FieldLegend variant="label">Map Options</FieldLegend>
+        <FieldGroup data-slot="checkbox-group">
+          {LAYERS.map(({ key, label }) => (
+            <Field key={key} orientation="horizontal">
+              <Checkbox
+                id={key}
+                checked={mapOptions[key]}
+                onCheckedChange={(checked) => handleLayerChange(key, checked)}
+                className="border border-black cursor-pointer"
+              />
+              <FieldLabel htmlFor={key} className="font-normal">
+                {label}
+              </FieldLabel>
+            </Field>
+          ))}
+        </FieldGroup>
+      </FieldSet>
     </div>
   );
 }

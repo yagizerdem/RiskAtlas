@@ -5,6 +5,7 @@ import {
   Popup,
   TileLayer,
   useMapEvents,
+  WMSTileLayer,
 } from "react-leaflet";
 import type { LatLng } from "leaflet";
 import RiskSummary from "@components/risk/risk-summary";
@@ -15,6 +16,8 @@ import {
 } from "@lib/risk-api";
 import { useEventEmitter } from "@hooks/use-event-emitter";
 import type { ResizeRiskMapEvent } from "@components/risk/type";
+import { useSelector } from "react-redux";
+import { selectMapOptions } from "@/store/slice/risk-map-slice";
 
 type Probe =
   | { status: "loading"; position: LatLng }
@@ -62,12 +65,15 @@ interface RiskMapProps {
   date?: string;
 }
 
+const GWIS_WMS = "https://maps.effis.emergency.copernicus.eu/gwis";
+
 export default function RiskMap({ date }: RiskMapProps) {
   const [probe, setProbe] = useState<Probe | null>(null);
   const level = probe?.status === "done" ? probe.risk.structural.level : null;
   const color = level ? LEVEL_STYLE[level].color : "#64748b";
   const { eventData } = useEventEmitter<ResizeRiskMapEvent>("resize-risk-map");
   const mapRef = useRef<ComponentRef<typeof MapContainer>>(null);
+  const mapOptions = useSelector(selectMapOptions);
 
   useEffect(() => {
     if (eventData?.resizeLeafletMap && mapRef.current) {
@@ -103,6 +109,60 @@ export default function RiskMap({ date }: RiskMapProps) {
           </Popup>
         </CircleMarker>
       )}
+
+      {/* map layers */}
+
+      {/* Human Settlement */}
+      {mapOptions.humanSettlementLayer && (
+        <WMSTileLayer
+          url={GWIS_WMS}
+          layers="ghsl"
+          format="image/png"
+          transparent
+          opacity={0.7}
+          attribution="GWIS"
+        />
+      )}
+
+      {/* Fuels */}
+
+      {mapOptions.fuelsLayer && (
+        <WMSTileLayer
+          url={GWIS_WMS}
+          layers="fuel_map"
+          format="image/png"
+          transparent
+          opacity={0.7}
+        />
+      )}
+
+      {/* Protected Areas */}
+      {mapOptions.protectedAreasLayer && (
+        <WMSTileLayer
+          url={GWIS_WMS}
+          layers="wdpa.poly"
+          format="image/png"
+          transparent
+          opacity={0.7}
+        />
+      )}
+
+      {/* Corine Landcover */}
+      {mapOptions.corineLandcoverLayer && (
+        <WMSTileLayer
+          url={GWIS_WMS}
+          layers="landcover.mcd12.orig.2024"
+          format="image/png"
+          transparent
+          opacity={0.7}
+          version="1.1.1"
+        />
+      )}
+
+      {/* <TileLayer
+        url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
+        attribution="Esri"
+      /> */}
     </MapContainer>
   );
 }

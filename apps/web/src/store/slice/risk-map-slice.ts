@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { RootState } from "@store/store";
 import deepmerge from "deepmerge";
 
-interface MapOptions {
+export interface MapOptions {
   humanSettlementLayer: boolean;
   protectedAreasLayer: boolean;
   corineLandcoverLayer: boolean;
@@ -38,7 +38,6 @@ export const riskMapSlice = createSlice({
 export const { setMapOptions } = riskMapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
-export const selectMapOptions = (state: RootState) =>
-  state.riskMap.mapOptions;
+export const selectMapOptions = (state: RootState) => state.riskMap.mapOptions;
 
 export default riskMapSlice.reducer;
