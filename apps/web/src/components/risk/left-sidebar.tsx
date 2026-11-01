@@ -1,17 +1,17 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@components/ui/checkbox";
 import {
   Field,
   FieldGroup,
   FieldLabel,
   FieldLegend,
   FieldSet,
-} from "@/components/ui/field";
+} from "@components/ui/field";
 import {
   selectMapOptions,
   setMapOptions,
   type MapOptions,
-} from "@/store/slice/risk-map-slice";
+} from "@store/slice/risk-map-slice";
 
 const LAYERS: { key: keyof MapOptions; label: string }[] = [
   { key: "humanSettlementLayer", label: "Settlement areas" },
