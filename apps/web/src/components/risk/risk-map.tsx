@@ -110,6 +110,13 @@ export default function RiskMap({ date }: RiskMapProps) {
         </CircleMarker>
       )}
 
+      {mapOptions.countryBoundariesLayer && (
+        <TileLayer
+          url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
+          attribution="Esri"
+        />
+      )}
+
       {/* map layers */}
 
       {/* Human Settlement */}
@@ -147,8 +154,8 @@ export default function RiskMap({ date }: RiskMapProps) {
         />
       )}
 
-      {/* Corine Landcover */}
-      {mapOptions.corineLandcoverLayer && (
+      {/* Modis Landcover */}
+      {mapOptions.modisLandcoverLayer && (
         <WMSTileLayer
           url={GWIS_WMS}
           layers="landcover.mcd12.orig.2024"
@@ -159,10 +166,18 @@ export default function RiskMap({ date }: RiskMapProps) {
         />
       )}
 
-      {/* <TileLayer
-        url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
-        attribution="Esri"
-      /> */}
+      {/* CORINE Land Cover 2018 */}
+      {mapOptions.corineLandcoverLayer && (
+        <WMSTileLayer
+          url="https://image.discomap.eea.europa.eu/arcgis/services/Corine/CLC2018_WM/MapServer/WMSServer"
+          layers="12"
+          format="image/png"
+          transparent
+          opacity={0.7}
+          version="1.1.1"
+          attribution="Copernicus Land Monitoring Service / EEA"
+        />
+      )}
     </MapContainer>
   );
 }

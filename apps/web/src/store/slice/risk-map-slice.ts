@@ -5,15 +5,19 @@ import deepmerge from "deepmerge";
 export interface MapOptions {
   humanSettlementLayer: boolean;
   protectedAreasLayer: boolean;
+  modisLandcoverLayer: boolean;
   corineLandcoverLayer: boolean;
   fuelsLayer: boolean;
+  countryBoundariesLayer: boolean;
 }
 
 const defaultMapOptions: MapOptions = {
   humanSettlementLayer: false,
   protectedAreasLayer: false,
+  modisLandcoverLayer: false,
   corineLandcoverLayer: false,
   fuelsLayer: false,
+  countryBoundariesLayer: false,
 };
 
 export interface RiskMapState {

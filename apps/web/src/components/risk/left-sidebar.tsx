@@ -16,8 +16,10 @@ import {
 const LAYERS: { key: keyof MapOptions; label: string }[] = [
   { key: "humanSettlementLayer", label: "Settlement areas" },
   { key: "protectedAreasLayer", label: "Protected areas" },
+  { key: "modisLandcoverLayer", label: "MODIS land cover" },
   { key: "corineLandcoverLayer", label: "CORINE land cover" },
   { key: "fuelsLayer", label: "Fuel types" },
+  { key: "countryBoundariesLayer", label: "Country boundaries" },
 ];
 
 export function LeftSidebar() {
