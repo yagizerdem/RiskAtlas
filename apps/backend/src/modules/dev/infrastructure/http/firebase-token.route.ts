@@ -184,4 +184,48 @@ firebaseTokenRouter.post(
   asyncWrapper(FirebaseTokenController.revokeIdToken),
 );
 
+/**
+ * @openapi
+ * /api/dev/firebase-clear-tokens:
+ *   post:
+ *     tags: [Dev]
+ *     summary: Clear Firebase token cookies (development only)
+ *     description: |
+ *       Removes the `dev_firebase_id_token` and `dev_firebase_refresh_token`
+ *       cookies, so subsequent requests from Swagger are sent unauthenticated.
+ *       Tokens are not revoked on the Firebase side. Only registered when
+ *       `NODE_ENV=development`.
+ *
+ *     responses:
+ *       200:
+ *         description: Token cookies cleared successfully
+ *         headers:
+ *           Set-Cookie:
+ *             description: Expires `dev_firebase_id_token` and `dev_firebase_refresh_token`
+ *             schema:
+ *               type: string
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Cleared Firebase tokens successfully
+ *                 httpStatusCode:
+ *                   type: integer
+ *                   example: 200
+ *                 data:
+ *                   type: object
+ *                   example: {}
+ *                 issues:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ */
+firebaseTokenRouter.post(
+  "/firebase-clear-tokens",
+  asyncWrapper(FirebaseTokenController.clearTokens),
+);
+
 export { firebaseTokenRouter };

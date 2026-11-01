@@ -90,4 +90,17 @@ export class FirebaseTokenController {
       ),
     );
   }
+
+  /**
+   * Clear Firebase tokens from browser cookies
+   * This endpoint is used only in dev mode to clear the Firebase tokens
+   * without needing to manually clear them from the browser dev tools.
+   */
+  static async clearTokens(req: Request, res: Response) {
+    res.clearCookie(DEV_FIREBASE_REFRESH_TOKEN_NAME);
+    res.clearCookie(DEV_FIREBASE_ID_TOKEN_NAME);
+    res
+      .status(HttpStatusCode.OK)
+      .send(ApiResponse.ok({}, "Cleared Firebase tokens successfully"));
+  }
 }
