@@ -8,6 +8,8 @@ const httpCodes = Object.fromEntries(
 export const MachineCode = {
   ...httpCodes,
   // add app-specific codes here, e.g. EMAIL_ALREADY_EXISTS: "EMAIL_ALREADY_EXISTS",
+
+  DEV_REFRESH_TOKEN_MISSING: "DEV_REFRESH_TOKEN_MISSING",
 } as const;
 
 export type MachineCode = (typeof MachineCode)[keyof typeof MachineCode];

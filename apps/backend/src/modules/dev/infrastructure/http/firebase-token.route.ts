@@ -3,8 +3,11 @@ import { FirebaseTokenController } from "@modules/dev/infrastructure/http/fireba
 import { validateRequest } from "@infrastructure/http/middleware/validateRequest.js";
 import { createLoginSchema } from "@riskatlas/shared/auth";
 import { asyncWrapper } from "@infrastructure/util/async-wrapper.js";
+import cookieParser from "cookie-parser";
 
 const firebaseTokenRouter = Router();
+
+firebaseTokenRouter.use(cookieParser());
 
 /**
  * @openapi
@@ -98,6 +101,90 @@ firebaseTokenRouter.post(
   "/firebase-refresh-token",
   asyncWrapper(validateRequest(createLoginSchema)),
   asyncWrapper(FirebaseTokenController.refreshToken),
+);
+
+/**
+ * @openapi
+ * /api/dev/firebase-revoke-id-token:
+ *   post:
+ *     tags: [Dev]
+ *     summary: Issue a new Firebase ID token from the refresh token cookie (development only)
+ *     description: |
+ *       Reads the `dev_firebase_refresh_token` cookie set by
+ *       `/api/dev/firebase-refresh-token`, exchanges it for a new ID token through
+ *       the Firebase Secure Token API, and writes both tokens back to cookies.
+ *       Only registered when `NODE_ENV=development`.
+
+ *     responses:
+ *       200:
+ *         description: New ID token issued successfully
+ *         headers:
+ *           Set-Cookie:
+ *             description: Sets `dev_firebase_id_token` and `dev_firebase_refresh_token`
+ *             schema:
+ *               type: string
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Revoke id-token successful
+ *                 httpStatusCode:
+ *                   type: integer
+ *                   example: 200
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     idToken:
+ *                       type: string
+ *                       example: eyJhbGciOiJSUzI1NiIsImtpZCI6...
+ *                     refreshToken:
+ *                       type: string
+ *                       example: AMf-vBx...
+ *                 issues:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *       400:
+ *         description: Refresh token cookie is missing
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Refresh token is missing
+ *                 httpStatusCode:
+ *                   type: integer
+ *                   example: 400
+ *                 issues:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *       500:
+ *         description: Firebase rejected the refresh token or could not be reached
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failed to revoke Firebase token
+ *                 httpStatusCode:
+ *                   type: integer
+ *                   example: 500
+ *                 issues:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ */
+firebaseTokenRouter.post(
+  "/firebase-revoke-id-token",
+  asyncWrapper(FirebaseTokenController.revokeIdToken),
 );
 
 export { firebaseTokenRouter };
