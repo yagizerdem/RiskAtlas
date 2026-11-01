@@ -89,6 +89,12 @@ export async function createApp() {
     await import("@modules/risk/infrastructure/http/risk.route.js");
   app.use("/api/risk", riskRouter);
 
+  if (process.env.NODE_ENV === "development") {
+    const { firebaseTokenRouter } =
+      await import("@modules/dev/infrastructure/http/firebase-token.route.js");
+    app.use("/api/dev", firebaseTokenRouter);
+  }
+
   app.use(errorMiddleware);
 
   return app;
