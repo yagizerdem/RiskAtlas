@@ -1,8 +1,18 @@
 import { useRef, useState } from "react";
-import { CircleMarker, MapContainer, Popup, TileLayer, useMapEvents } from "react-leaflet";
+import {
+  CircleMarker,
+  MapContainer,
+  Popup,
+  TileLayer,
+  useMapEvents,
+} from "react-leaflet";
 import type { LatLng } from "leaflet";
-import RiskSummary from "@components/risk-map/risk-summary";
-import { fetchFireRisk, LEVEL_STYLE, type FireRiskAssessment } from "@lib/risk-api";
+import RiskSummary from "@/components/risk/risk-summary";
+import {
+  fetchFireRisk,
+  LEVEL_STYLE,
+  type FireRiskAssessment,
+} from "@lib/risk-api";
 
 type Probe =
   | { status: "loading"; position: LatLng }
@@ -29,7 +39,12 @@ function ClickToAssess({
       const position = e.latlng;
       onProbe({ status: "loading", position });
       try {
-        const risk = await fetchFireRisk(position.lat, position.lng, date, controller.signal);
+        const risk = await fetchFireRisk(
+          position.lat,
+          position.lng,
+          date,
+          controller.signal,
+        );
         onProbe({ status: "done", position, risk });
       } catch (err) {
         if (controller.signal.aborted) return;
@@ -41,7 +56,11 @@ function ClickToAssess({
   return null;
 }
 
-export default function RiskMap({ date }: { date?: string }) {
+interface RiskMapProps {
+  date?: string;
+}
+
+export default function RiskMap({ date }: RiskMapProps) {
   const [probe, setProbe] = useState<Probe | null>(null);
   const level = probe?.status === "done" ? probe.risk.structural.level : null;
   const color = level ? LEVEL_STYLE[level].color : "#64748b";
