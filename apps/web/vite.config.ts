@@ -20,6 +20,7 @@ export default defineConfig({
       "@providers": path.resolve(import.meta.dirname, "src/providers"),
       "@store": path.resolve(import.meta.dirname, "src/store"),
       "@error": path.resolve(import.meta.dirname, "src/error"),
+      "@hooks": path.resolve(import.meta.dirname, "src/hooks"),
     },
   },
   server: {

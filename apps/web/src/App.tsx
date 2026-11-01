@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 import { app as firebaseApp } from "@lib/firebase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useDispatch } from "react-redux";
-import { setIsLoggedIn } from "@store/auth/slice/auth-slice";
+import { setIsLoggedIn } from "@store/slice/auth-slice";
 
 export default function App() {
   const guard = useRef<number>(0);

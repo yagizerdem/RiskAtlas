@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { AuthRootState } from "@store/auth/auth-store";
+import type { RootState } from "@store/store";
 
 export interface AuthState {
   isLoggedIn: boolean;
@@ -30,6 +30,6 @@ export const authSlice = createSlice({
 export const { setIsLoggedIn } = authSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
-export const selectIsLoggedIn = (state: AuthRootState) => state.auth.isLoggedIn;
+export const selectIsLoggedIn = (state: RootState) => state.auth.isLoggedIn;
 
 export default authSlice.reducer;

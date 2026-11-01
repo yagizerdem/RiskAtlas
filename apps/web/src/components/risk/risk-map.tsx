@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState, type ComponentRef } from "react";
 import {
   CircleMarker,
   MapContainer,
@@ -7,12 +7,14 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import type { LatLng } from "leaflet";
-import RiskSummary from "@/components/risk/risk-summary";
+import RiskSummary from "@components/risk/risk-summary";
 import {
   fetchFireRisk,
   LEVEL_STYLE,
   type FireRiskAssessment,
 } from "@lib/risk-api";
+import { useEventEmitter } from "@hooks/use-event-emitter";
+import type { ResizeRiskMapEvent } from "@components/risk/type";
 
 type Probe =
   | { status: "loading"; position: LatLng }
@@ -64,9 +66,22 @@ export default function RiskMap({ date }: RiskMapProps) {
   const [probe, setProbe] = useState<Probe | null>(null);
   const level = probe?.status === "done" ? probe.risk.structural.level : null;
   const color = level ? LEVEL_STYLE[level].color : "#64748b";
+  const { eventData } = useEventEmitter<ResizeRiskMapEvent>("resize-risk-map");
+  const mapRef = useRef<ComponentRef<typeof MapContainer>>(null);
+
+  useEffect(() => {
+    if (eventData?.resizeLeafletMap && mapRef.current) {
+      mapRef.current.invalidateSize();
+    }
+  }, [eventData]);
 
   return (
-    <MapContainer center={IZMIR} zoom={10} className="h-full w-full">
+    <MapContainer
+      center={IZMIR}
+      zoom={10}
+      className="h-full w-full"
+      ref={mapRef}
+    >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution="&copy; OpenStreetMap"

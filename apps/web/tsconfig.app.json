@@ -24,7 +24,8 @@
       "@assets/*": ["./src/assets/*"],
       "@providers/*": ["./src/providers/*"],
       "@store/*": ["./src/store/*"],
-      "@error/*": ["./src/error/*"]
+      "@error/*": ["./src/error/*"],
+      "@hooks/*": ["./src/hooks/*"]
     },
 
     /* Linting */
