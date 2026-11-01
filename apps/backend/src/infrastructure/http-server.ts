@@ -18,6 +18,8 @@ import { HttpStatusCode } from "@riskatlas/shared";
 import swaggerUi from "swagger-ui-express";
 import swaggerJSDoc from "swagger-jsdoc";
 import { options } from "@infrastructure/swagger/options.js";
+import cookieParser from "cookie-parser";
+import { firebaseAuthenticationMiddleware } from "@infrastructure/security/middleware/firebase-authentication.middleware.js";
 
 export async function createApp() {
   // process-level error handling setup
@@ -29,6 +31,9 @@ export async function createApp() {
 
   const app = express();
   app.set("trust proxy", true);
+
+  app.use(cookieParser());
+  app.use(firebaseAuthenticationMiddleware());
 
   // Security Filter Chain
   const securityFilterChain = new HttpSecurityBuilder()
@@ -43,6 +48,7 @@ export async function createApp() {
 
       // production routes
       auth.requestMatchers("/api/auth/**").permitAll();
+      auth.requestMatchers("/api/risk/**").authenticated();
     })
     .build();
 

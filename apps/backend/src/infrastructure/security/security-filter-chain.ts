@@ -2,13 +2,7 @@ import { Request, Response, NextFunction, RequestHandler } from "express";
 import { AppError } from "@core/errors/app-error.js";
 import { HttpStatusCode } from "@riskatlas/shared";
 import { MachineCode } from "@core/errors/machine-code.js";
-
-export interface AuthenticatedRequest extends Request {
-  auth?: {
-    subject?: string;
-    [key: string]: unknown;
-  };
-}
+import { type AuthenticatedRequest } from "@infrastructure/security/extended-request-object.js";
 
 export type Predicate = (req: AuthenticatedRequest) => boolean;
 

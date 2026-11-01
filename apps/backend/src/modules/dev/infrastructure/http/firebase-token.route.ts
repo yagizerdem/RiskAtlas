@@ -3,11 +3,8 @@ import { FirebaseTokenController } from "@modules/dev/infrastructure/http/fireba
 import { validateRequest } from "@infrastructure/http/middleware/validateRequest.js";
 import { createLoginSchema } from "@riskatlas/shared/auth";
 import { asyncWrapper } from "@infrastructure/util/async-wrapper.js";
-import cookieParser from "cookie-parser";
 
 const firebaseTokenRouter = Router();
-
-firebaseTokenRouter.use(cookieParser());
 
 /**
  * @openapi
