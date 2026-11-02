@@ -21,7 +21,8 @@ import {
   selectForecastOptions,
   selectMapOptions,
   selectSelectedDate,
-  type TFWI,
+  type ForecastOptions,
+  type TFireForcastDangerSource,
 } from "@/store/slice/risk-map-slice";
 
 type Probe =
@@ -68,17 +69,39 @@ function ClickToAssess({
 
 const GWIS_WMS = "https://maps.effis.emergency.copernicus.eu/gwis";
 
-// GWIS layer name is `<source>.<suffix>`, e.g. ecmwf.fwi, mf025.ranking
-const FWI_LAYER_SUFFIX: Record<TFWI["full_name"], string> = {
-  FIRE_WEATHER_INDEX: "fwi",
-  INITIAL_SPREAD_INDEX: "isi",
-  BUILD_UP_INDEX: "bui",
-  FINE_FUEL_MOISTURE_CODE: "ffmc",
-  DUFF_MOISTURE_CODE: "dmc",
-  DROUGHT_CODE: "dc",
-  ANOMALY: "anomaly",
-  RANKING: "ranking",
+// GWIS layer name is `<source>.<suffix>`, e.g. ecmwf.fwi, ecmwf.mark5.kbdi.
+// `sources` lists where the layer exists in GWIS; omitted means all sources.
+const FORECAST_LAYERS: Record<
+  ForecastOptions["fireWeatherIndex"]["full_name"],
+  { suffix: string; sources?: TFireForcastDangerSource[] }
+> = {
+  FIRE_WEATHER_INDEX: { suffix: "fwi" },
+  INITIAL_SPREAD_INDEX: { suffix: "isi" },
+  BUILD_UP_INDEX: { suffix: "bui" },
+  FINE_FUEL_MOISTURE_CODE: { suffix: "ffmc" },
+  DUFF_MOISTURE_CODE: { suffix: "dmc" },
+  DROUGHT_CODE: { suffix: "dc" },
+  ANOMALY: { suffix: "anomaly", sources: ["ecmwf", "mf025"] },
+  RANKING: { suffix: "ranking", sources: ["ecmwf", "mf025"] },
+  KEETCH_BYRAM_DROUGHT_INDEX: { suffix: "mark5.kbdi", sources: ["ecmwf"] },
+  DROUGHT_FACTOR: { suffix: "mark5.df", sources: ["ecmwf"] },
+  RATE_OF_SPREAD: { suffix: "mark5.ros", sources: ["ecmwf"] },
+  FIRE_DANGER_INDEX: { suffix: "mark5.fdi", sources: ["ecmwf"] },
+  NFDRS_RATE_OF_SPREAD: { suffix: "nfdrs.ros", sources: ["ecmwf"] },
+  NFDRS_SPREAD_COMPONENT: { suffix: "nfdrs.sc", sources: ["ecmwf"] },
+  NFDRS_ENERGY_RELEASE_COMPONENT: { suffix: "nfdrs.erc", sources: ["ecmwf"] },
+  NFDRS_BURNING_INDEX: { suffix: "nfdrs.bi", sources: ["ecmwf"] },
+  NFDRS_IGNITION_PROBABILITY: { suffix: "nfdrs.ic", sources: ["ecmwf"] },
 };
+
+function getFireDangerLayer({
+  fireDangerSource,
+  fireWeatherIndex,
+}: ForecastOptions) {
+  const { suffix, sources } = FORECAST_LAYERS[fireWeatherIndex.full_name];
+  if (sources && !sources.includes(fireDangerSource)) return null;
+  return `${fireDangerSource}.${suffix}`;
+}
 
 export default function RiskMap() {
   const [probe, setProbe] = useState<Probe | null>(null);
@@ -88,14 +111,7 @@ export default function RiskMap() {
   const mapRef = useRef<ComponentRef<typeof MapContainer>>(null);
   const mapOptions = useSelector(selectMapOptions);
   const forecastOptions = useSelector(selectForecastOptions);
-  const { fireDangerSource, fireWeatherIndex } = forecastOptions;
-  // nasa_geos5 has no anomaly/ranking layers in GWIS
-  const fireDangerLayer =
-    fireDangerSource === "nasa_geos5" &&
-    (fireWeatherIndex.full_name === "ANOMALY" ||
-      fireWeatherIndex.full_name === "RANKING")
-      ? null
-      : `${fireDangerSource}.${FWI_LAYER_SUFFIX[fireWeatherIndex.full_name]}`;
+  const fireDangerLayer = getFireDangerLayer(forecastOptions);
 
   useEffect(() => {
     if (eventData?.resizeLeafletMap && mapRef.current) {

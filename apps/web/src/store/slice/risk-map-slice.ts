@@ -56,10 +56,51 @@ export type TFWI =
       abbreviation: "FWI";
     };
 
+export type TKBDI = {
+  full_name: "KEETCH_BYRAM_DROUGHT_INDEX";
+  abbreviation: "KBDI";
+};
+
+export type TMARK5 =
+  | {
+      full_name: "DROUGHT_FACTOR";
+      abbreviation: "DF";
+    }
+  | {
+      full_name: "RATE_OF_SPREAD";
+      abbreviation: "ROS";
+    }
+  | {
+      full_name: "FIRE_DANGER_INDEX";
+      abbreviation: "FDI";
+    };
+
+export type TNFDRS =
+  | {
+      full_name: "NFDRS_RATE_OF_SPREAD";
+      abbreviation: "NFDRS_ROS";
+    }
+  | {
+      full_name: "NFDRS_SPREAD_COMPONENT";
+      abbreviation: "NFDRS_SC";
+    }
+  | {
+      full_name: "NFDRS_ENERGY_RELEASE_COMPONENT";
+      abbreviation: "NFDRS_ERC";
+    }
+  | {
+      full_name: "NFDRS_BURNING_INDEX";
+      abbreviation: "NFDRS_BI";
+    }
+  | {
+      full_name: "NFDRS_IGNITION_PROBABILITY";
+      abbreviation: "NFDRS_IC";
+    };
+
 export interface ForecastOptions {
   showFireDangerForecast: boolean;
   fireDangerSource: TFireForcastDangerSource;
-  fireWeatherIndex: TFWI;
+  fireWeatherIndex: TFWI | TKBDI | TMARK5 | TNFDRS;
 }
 
 const defaultForecastOptions: ForecastOptions = {

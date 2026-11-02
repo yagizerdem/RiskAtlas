@@ -19,6 +19,7 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@components/ui/select";
@@ -32,6 +33,9 @@ import {
   setForecastOptions,
   type TFireForcastDangerSource,
   type TFWI,
+  type TKBDI,
+  type TMARK5,
+  type TNFDRS,
 } from "@store/slice/risk-map-slice";
 
 const SOURCES: { value: TFireForcastDangerSource; label: string }[] = [
@@ -40,32 +44,115 @@ const SOURCES: { value: TFireForcastDangerSource; label: string }[] = [
   { value: "nasa_geos5", label: "NASA GEOS-5" },
 ];
 
-const FWI_INDICES: { label: string; value: TFWI["full_name"] }[] = [
-  { label: "Fire Weather Index (FWI)", value: "FIRE_WEATHER_INDEX" },
-  { label: "Initial Spread Index (ISI)", value: "INITIAL_SPREAD_INDEX" },
-  { label: "Build Up Index (BUI)", value: "BUILD_UP_INDEX" },
-  { label: "Fine Fuel Moisture Code (FFMC)", value: "FINE_FUEL_MOISTURE_CODE" },
-  { label: "Duff Moisture Code (DMC)", value: "DUFF_MOISTURE_CODE" },
-  { label: "Drought Code (DC)", value: "DROUGHT_CODE" },
-  { label: "Anomaly (FWI)", value: "ANOMALY" },
-  { label: "Ranking (FWI)", value: "RANKING" },
+type TIndex = TFWI | TKBDI | TMARK5 | TNFDRS;
+
+const INDEX_GROUPS: {
+  label: string;
+  items: { label: string; index: TIndex }[];
+}[] = [
+  {
+    label: "Fire Weather Index",
+    items: [
+      {
+        label: "Fire Weather Index (FWI)",
+        index: { full_name: "FIRE_WEATHER_INDEX", abbreviation: "FWI" },
+      },
+      {
+        label: "Initial Spread Index (ISI)",
+        index: { full_name: "INITIAL_SPREAD_INDEX", abbreviation: "ISI" },
+      },
+      {
+        label: "Build Up Index (BUI)",
+        index: { full_name: "BUILD_UP_INDEX", abbreviation: "BUI" },
+      },
+      {
+        label: "Fine Fuel Moisture Code (FFMC)",
+        index: { full_name: "FINE_FUEL_MOISTURE_CODE", abbreviation: "FFMC" },
+      },
+      {
+        label: "Duff Moisture Code (DMC)",
+        index: { full_name: "DUFF_MOISTURE_CODE", abbreviation: "DMC" },
+      },
+      {
+        label: "Drought Code (DC)",
+        index: { full_name: "DROUGHT_CODE", abbreviation: "DC" },
+      },
+      {
+        label: "Anomaly (FWI)",
+        index: { full_name: "ANOMALY", abbreviation: "FWI" },
+      },
+      {
+        label: "Ranking (FWI)",
+        index: { full_name: "RANKING", abbreviation: "FWI" },
+      },
+    ],
+  },
+  {
+    label: "Mark-5",
+    items: [
+      {
+        label: "Keetch-Byram Drought Index (KBDI)",
+        index: { full_name: "KEETCH_BYRAM_DROUGHT_INDEX", abbreviation: "KBDI" },
+      },
+      {
+        label: "Drought Factor (DF)",
+        index: { full_name: "DROUGHT_FACTOR", abbreviation: "DF" },
+      },
+      {
+        label: "Rate of Spread (ROS)",
+        index: { full_name: "RATE_OF_SPREAD", abbreviation: "ROS" },
+      },
+      {
+        label: "Fire Danger Index (FDI)",
+        index: { full_name: "FIRE_DANGER_INDEX", abbreviation: "FDI" },
+      },
+    ],
+  },
+  {
+    label: "NFDRS",
+    items: [
+      {
+        label: "Rate of Spread (ROS)",
+        index: { full_name: "NFDRS_RATE_OF_SPREAD", abbreviation: "NFDRS_ROS" },
+      },
+      {
+        label: "Spread Component (SC)",
+        index: {
+          full_name: "NFDRS_SPREAD_COMPONENT",
+          abbreviation: "NFDRS_SC",
+        },
+      },
+      {
+        label: "Energy Release Component (ERC)",
+        index: {
+          full_name: "NFDRS_ENERGY_RELEASE_COMPONENT",
+          abbreviation: "NFDRS_ERC",
+        },
+      },
+      {
+        label: "Burning Index (BI)",
+        index: { full_name: "NFDRS_BURNING_INDEX", abbreviation: "NFDRS_BI" },
+      },
+      {
+        label: "Ignition Component (IC)",
+        index: {
+          full_name: "NFDRS_IGNITION_PROBABILITY",
+          abbreviation: "NFDRS_IC",
+        },
+      },
+    ],
+  },
 ];
-const FWI_BY_NAME: Record<TFWI["full_name"], TFWI> = {
-  FIRE_WEATHER_INDEX: { full_name: "FIRE_WEATHER_INDEX", abbreviation: "FWI" },
-  INITIAL_SPREAD_INDEX: {
-    full_name: "INITIAL_SPREAD_INDEX",
-    abbreviation: "ISI",
-  },
-  BUILD_UP_INDEX: { full_name: "BUILD_UP_INDEX", abbreviation: "BUI" },
-  FINE_FUEL_MOISTURE_CODE: {
-    full_name: "FINE_FUEL_MOISTURE_CODE",
-    abbreviation: "FFMC",
-  },
-  DUFF_MOISTURE_CODE: { full_name: "DUFF_MOISTURE_CODE", abbreviation: "DMC" },
-  DROUGHT_CODE: { full_name: "DROUGHT_CODE", abbreviation: "DC" },
-  ANOMALY: { full_name: "ANOMALY", abbreviation: "FWI" },
-  RANKING: { full_name: "RANKING", abbreviation: "FWI" },
-};
+
+const INDEX_ITEMS = INDEX_GROUPS.flatMap((group) =>
+  group.items.map(({ label, index }) => ({ label, value: index.full_name })),
+);
+
+const INDEX_BY_NAME = new Map<TIndex["full_name"], TIndex>(
+  INDEX_GROUPS.flatMap((group) =>
+    group.items.map(({ index }) => [index.full_name, index] as const),
+  ),
+);
 
 function InfoTip({ text }: { text: string }) {
   return (
@@ -95,12 +182,10 @@ export default function ForecastOption() {
   const forecastOptions = useSelector(selectForecastOptions);
   const source = forecastOptions.fireDangerSource;
   const fireDangerEnabled = forecastOptions.showFireDangerForecast;
-  const fwi: (typeof FWI_INDICES)[number] = FWI_INDICES.find(
-    (item) => item.value === forecastOptions.fireWeatherIndex.full_name,
-  )!;
 
-  function handleFWIChange(value: TFWI["full_name"]) {
-    dispatch(setForecastOptions({ fireWeatherIndex: FWI_BY_NAME[value] }));
+  function handleIndexChange(value: TIndex["full_name"]) {
+    const index = INDEX_BY_NAME.get(value);
+    if (index) dispatch(setForecastOptions({ fireWeatherIndex: index }));
   }
 
   return (
@@ -169,21 +254,24 @@ export default function ForecastOption() {
           </FieldLabel>
           <FieldContent>
             <Select
-              items={FWI_INDICES}
-              value={fwi.value}
-              onValueChange={(value) => value && handleFWIChange(value)}
+              items={INDEX_ITEMS}
+              value={forecastOptions.fireWeatherIndex.full_name}
+              onValueChange={(value) => value && handleIndexChange(value)}
             >
               <SelectTrigger id="forecast-index" className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectGroup>
-                  {FWI_INDICES.map((item) => (
-                    <SelectItem key={item.value} value={item.value}>
-                      {item.label}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
+                {INDEX_GROUPS.map((group) => (
+                  <SelectGroup key={group.label}>
+                    <SelectLabel>{group.label}</SelectLabel>
+                    {group.items.map(({ label, index }) => (
+                      <SelectItem key={index.full_name} value={index.full_name}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                ))}
               </SelectContent>
             </Select>
           </FieldContent>
