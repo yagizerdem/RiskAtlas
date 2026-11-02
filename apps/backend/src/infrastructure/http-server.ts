@@ -53,8 +53,10 @@ export async function createApp() {
     .addFilter(rateLimitMiddleware())
     .authorizeHttpRequests((auth) => {
       // development routes
-      auth.requestMatchers("/health").permitAll();
-      auth.requestMatchers("/error").permitAll();
+      if (process.env.NODE_ENV === "development") {
+        auth.requestMatchers("/health").permitAll();
+        auth.requestMatchers("/error").permitAll();
+      }
 
       // production routes
       auth.requestMatchers("/api/auth").permitAll();
@@ -75,15 +77,15 @@ export async function createApp() {
 
   //  Routes
 
-  app.get("/health", (req, res) => {
-    res
-      .status(HttpStatusCode.OK)
-      .json({ status: "UP", timestamp: new Date().toISOString() });
-  });
-
   if (process.env.NODE_ENV === "development") {
     app.get("/error", () => {
       throw new Error("Simulated error for testing purposes");
+    });
+
+    app.get("/health", (req, res) => {
+      res
+        .status(HttpStatusCode.OK)
+        .json({ status: "UP", timestamp: new Date().toISOString() });
     });
   }
 
