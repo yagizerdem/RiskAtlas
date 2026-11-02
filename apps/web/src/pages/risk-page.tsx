@@ -1,4 +1,3 @@
-import { useState } from "react";
 import RiskMap from "@/components/risk/risk-map";
 import {
   ResizableHandle,
@@ -7,12 +6,18 @@ import {
 } from "@/components/ui/resizable";
 import { useEventEmitter } from "@/hooks/use-event-emitter";
 import type { ResizeRiskMapEvent } from "@components/risk/type";
-import { LeftSidebar } from "@/components/risk/left-sidebar";
-
-const today = () => new Date().toISOString().slice(0, 10);
+import LeftSidebar from "@/components/risk/left-sidebar/left-sidebar";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectSelectedDate,
+  setSelectedDate,
+} from "@/store/slice/risk-map-slice";
+import { today } from "@/lib/utils";
 
 export default function RiskPage() {
-  const [date, setDate] = useState(today);
+  const selectedDate = useSelector(selectSelectedDate);
+  const dispatch = useDispatch();
+
   const { publishEvent } =
     useEventEmitter<ResizeRiskMapEvent>("resize-risk-map");
 
@@ -40,14 +45,16 @@ export default function RiskPage() {
             Tarih
             <input
               type="date"
-              value={date}
+              value={selectedDate}
               min="1940-01-01"
               max={today()}
-              onChange={(e) => setDate(e.target.value || today())}
+              onChange={(e) => {
+                dispatch(setSelectedDate(e.target.value || today()));
+              }}
               className="outline-none"
             />
           </label>
-          <RiskMap date={date} />
+          <RiskMap date={selectedDate} />
         </div>
       </ResizablePanel>
     </ResizablePanelGroup>

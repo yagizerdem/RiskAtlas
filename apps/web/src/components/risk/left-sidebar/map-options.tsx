@@ -1,4 +1,3 @@
-import { useDispatch, useSelector } from "react-redux";
 import { Checkbox } from "@components/ui/checkbox";
 import {
   Field,
@@ -7,6 +6,9 @@ import {
   FieldLegend,
   FieldSet,
 } from "@components/ui/field";
+
+import { useDispatch, useSelector } from "react-redux";
+
 import {
   selectMapOptions,
   setMapOptions,
@@ -22,7 +24,7 @@ const LAYERS: { key: keyof MapOptions; label: string }[] = [
   { key: "countryBoundariesLayer", label: "Country boundaries" },
 ];
 
-export function LeftSidebar() {
+export default function MapOptions() {
   const mapOptions = useSelector(selectMapOptions);
   const dispatch = useDispatch();
 
@@ -31,25 +33,23 @@ export function LeftSidebar() {
   }
 
   return (
-    <div className="flex h-full w-full flex-col gap-4 overflow-y-auto bg-background p-4">
-      <FieldSet>
-        <FieldLegend variant="label">Map Options</FieldLegend>
-        <FieldGroup data-slot="checkbox-group">
-          {LAYERS.map(({ key, label }) => (
-            <Field key={key} orientation="horizontal">
-              <Checkbox
-                id={key}
-                checked={mapOptions[key]}
-                onCheckedChange={(checked) => handleLayerChange(key, checked)}
-                className="border border-black cursor-pointer"
-              />
-              <FieldLabel htmlFor={key} className="font-normal">
-                {label}
-              </FieldLabel>
-            </Field>
-          ))}
-        </FieldGroup>
-      </FieldSet>
-    </div>
+    <FieldSet>
+      <FieldLegend variant="label">Map Options</FieldLegend>
+      <FieldGroup data-slot="checkbox-group">
+        {LAYERS.map(({ key, label }) => (
+          <Field key={key} orientation="horizontal">
+            <Checkbox
+              id={key}
+              checked={mapOptions[key]}
+              onCheckedChange={(checked) => handleLayerChange(key, checked)}
+              className="border border-black cursor-pointer"
+            />
+            <FieldLabel htmlFor={key} className="font-normal">
+              {label}
+            </FieldLabel>
+          </Field>
+        ))}
+      </FieldGroup>
+    </FieldSet>
   );
 }
