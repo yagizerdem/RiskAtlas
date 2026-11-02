@@ -17,7 +17,12 @@ import {
 import { useEventEmitter } from "@hooks/use-event-emitter";
 import type { ResizeRiskMapEvent } from "@components/risk/type";
 import { useSelector } from "react-redux";
-import { selectMapOptions } from "@/store/slice/risk-map-slice";
+import {
+  selectForecastOptions,
+  selectMapOptions,
+  selectSelectedDate,
+  type TFWI,
+} from "@/store/slice/risk-map-slice";
 
 type Probe =
   | { status: "loading"; position: LatLng }
@@ -61,25 +66,44 @@ function ClickToAssess({
   return null;
 }
 
-interface RiskMapProps {
-  date?: string;
-}
-
 const GWIS_WMS = "https://maps.effis.emergency.copernicus.eu/gwis";
 
-export default function RiskMap({ date }: RiskMapProps) {
+// GWIS layer name is `<source>.<suffix>`, e.g. ecmwf.fwi, mf025.ranking
+const FWI_LAYER_SUFFIX: Record<TFWI["full_name"], string> = {
+  FIRE_WEATHER_INDEX: "fwi",
+  INITIAL_SPREAD_INDEX: "isi",
+  BUILD_UP_INDEX: "bui",
+  FINE_FUEL_MOISTURE_CODE: "ffmc",
+  DUFF_MOISTURE_CODE: "dmc",
+  DROUGHT_CODE: "dc",
+  ANOMALY: "anomaly",
+  RANKING: "ranking",
+};
+
+export default function RiskMap() {
   const [probe, setProbe] = useState<Probe | null>(null);
   const level = probe?.status === "done" ? probe.risk.structural.level : null;
   const color = level ? LEVEL_STYLE[level].color : "#64748b";
   const { eventData } = useEventEmitter<ResizeRiskMapEvent>("resize-risk-map");
   const mapRef = useRef<ComponentRef<typeof MapContainer>>(null);
   const mapOptions = useSelector(selectMapOptions);
+  const forecastOptions = useSelector(selectForecastOptions);
+  const { fireDangerSource, fireWeatherIndex } = forecastOptions;
+  // nasa_geos5 has no anomaly/ranking layers in GWIS
+  const fireDangerLayer =
+    fireDangerSource === "nasa_geos5" &&
+    (fireWeatherIndex.full_name === "ANOMALY" ||
+      fireWeatherIndex.full_name === "RANKING")
+      ? null
+      : `${fireDangerSource}.${FWI_LAYER_SUFFIX[fireWeatherIndex.full_name]}`;
 
   useEffect(() => {
     if (eventData?.resizeLeafletMap && mapRef.current) {
       mapRef.current.invalidateSize();
     }
   }, [eventData]);
+
+  const date = useSelector(selectSelectedDate);
 
   return (
     <MapContainer
@@ -176,6 +200,22 @@ export default function RiskMap({ date }: RiskMapProps) {
           opacity={0.7}
           version="1.1.1"
           attribution="Copernicus Land Monitoring Service / EEA"
+        />
+      )}
+
+      {/* Fire danger forecast */}
+      {forecastOptions.showFireDangerForecast && fireDangerLayer && (
+        <WMSTileLayer
+          key={fireDangerLayer}
+          url={GWIS_WMS}
+          format="image/png"
+          transparent
+          opacity={0.7}
+          params={{
+            time: date,
+            layers: fireDangerLayer,
+          }}
+          attribution="GWIS"
         />
       )}
     </MapContainer>
