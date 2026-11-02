@@ -98,9 +98,13 @@ export type TNFDRS =
     };
 
 export interface ForecastOptions {
+  // fire
   showFireDangerForecast: boolean;
   fireDangerSource: TFireForcastDangerSource;
   fireWeatherIndex: TFWI | TKBDI | TMARK5 | TNFDRS;
+
+  // lightning
+  showLightningForecast: boolean;
 }
 
 const defaultForecastOptions: ForecastOptions = {
@@ -110,6 +114,7 @@ const defaultForecastOptions: ForecastOptions = {
     abbreviation: "FWI",
     full_name: "FIRE_WEATHER_INDEX",
   },
+  showLightningForecast: false,
 };
 
 export interface RiskMapState {

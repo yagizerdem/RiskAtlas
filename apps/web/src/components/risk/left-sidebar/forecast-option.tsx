@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { InfoIcon } from "lucide-react";
 
@@ -92,7 +91,10 @@ const INDEX_GROUPS: {
     items: [
       {
         label: "Keetch-Byram Drought Index (KBDI)",
-        index: { full_name: "KEETCH_BYRAM_DROUGHT_INDEX", abbreviation: "KBDI" },
+        index: {
+          full_name: "KEETCH_BYRAM_DROUGHT_INDEX",
+          abbreviation: "KBDI",
+        },
       },
       {
         label: "Drought Factor (DF)",
@@ -177,15 +179,19 @@ function InfoTip({ text }: { text: string }) {
 }
 
 export default function ForecastOption() {
-  const [lightningEnabled, setLightningEnabled] = useState(false);
   const dispatch = useDispatch();
   const forecastOptions = useSelector(selectForecastOptions);
   const source = forecastOptions.fireDangerSource;
   const fireDangerEnabled = forecastOptions.showFireDangerForecast;
+  const lightningEnabled = forecastOptions.showLightningForecast;
 
   function handleIndexChange(value: TIndex["full_name"]) {
     const index = INDEX_BY_NAME.get(value);
     if (index) dispatch(setForecastOptions({ fireWeatherIndex: index }));
+  }
+
+  function handleLightningChange(checked: boolean) {
+    dispatch(setForecastOptions({ showLightningForecast: checked }));
   }
 
   return (
@@ -283,7 +289,7 @@ export default function ForecastOption() {
           <Checkbox
             id="lightning-forecast"
             checked={lightningEnabled}
-            onCheckedChange={setLightningEnabled}
+            onCheckedChange={handleLightningChange}
             className="cursor-pointer"
           />
           <FieldLabel

@@ -107,11 +107,13 @@ export default function RiskMap() {
   const [probe, setProbe] = useState<Probe | null>(null);
   const level = probe?.status === "done" ? probe.risk.structural.level : null;
   const color = level ? LEVEL_STYLE[level].color : "#64748b";
+
   const { eventData } = useEventEmitter<ResizeRiskMapEvent>("resize-risk-map");
   const mapRef = useRef<ComponentRef<typeof MapContainer>>(null);
   const mapOptions = useSelector(selectMapOptions);
   const forecastOptions = useSelector(selectForecastOptions);
   const fireDangerLayer = getFireDangerLayer(forecastOptions);
+  const lightningEnabled = forecastOptions.showLightningForecast;
 
   useEffect(() => {
     if (eventData?.resizeLeafletMap && mapRef.current) {
@@ -230,6 +232,21 @@ export default function RiskMap() {
           params={{
             time: date,
             layers: fireDangerLayer,
+          }}
+          attribution="GWIS"
+        />
+      )}
+
+      {lightningEnabled && (
+        <WMSTileLayer
+          key={"ecmwf.extra.lightning"}
+          url={GWIS_WMS}
+          format="image/png"
+          transparent
+          opacity={0.7}
+          params={{
+            time: date,
+            layers: "ecmwf.extra.lightning",
           }}
           attribution="GWIS"
         />
