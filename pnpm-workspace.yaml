@@ -4,9 +4,15 @@ packages:
 allowBuilds:
   "@firebase/util": true
   "@scarf/scarf": false
+  "@swc/core": true
+  core-js: false
   "@tsparticles/engine": false
   esbuild: true
   protobufjs: true
+minimumReleaseAgeExclude:
+  - "@types/react@19.3.2"
+  - lucide-react@1.80.0
+  - react-resizable-panels@4.24.2
 packageExtensions:
   react-leaflet:
     peerDependencies:
