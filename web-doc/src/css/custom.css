@@ -1,0 +1,24 @@
+@import './shadcn.css';
+
+:root {
+  /* shadcn's portalled dialogs and menus use z-50. */
+  --ifm-z-index-fixed: 40;
+  --ifm-z-index-overlay: 45;
+  --ifm-color-primary: #087f8c;
+  --ifm-color-primary-dark: #07727e;
+  --ifm-color-primary-darker: #076c77;
+  --ifm-color-primary-darkest: #065962;
+  --ifm-color-primary-light: #098c9a;
+  --ifm-color-primary-lighter: #0992a1;
+  --ifm-color-primary-lightest: #0aa5b6;
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #4dd0e1;
+  --ifm-color-primary-dark: #32c9dc;
+  --ifm-color-primary-darker: #26c5da;
+  --ifm-color-primary-darkest: #1da6b8;
+  --ifm-color-primary-light: #68d7e6;
+  --ifm-color-primary-lighter: #75dbea;
+  --ifm-color-primary-lightest: #9ee6f1;
+}

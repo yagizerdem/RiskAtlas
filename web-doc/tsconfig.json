@@ -1,0 +1,14 @@
+{
+  "extends": "@docusaurus/tsconfig",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@site/*": ["./*"]
+    },
+    "types": ["node", "@docusaurus/module-type-aliases"],
+    "ignoreDeprecations": "6.0"
+  },
+  "include": ["src", "plugins", "docusaurus.config.js", "sidebars.js"],
+  "exclude": ["node_modules", "build", ".docusaurus"]
+}
