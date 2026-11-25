@@ -1,0 +1,27 @@
+[project]
+name = "flood-ai"
+version = "0.1.0"
+description = "Multi-model ML flood risk (1-10) prediction for coordinates, served via a Flask API"
+readme = "README.md"
+authors = [
+    { name = "yagiz erdem", email = "2yagiz004@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "flask>=3.1.3",
+    "joblib>=1.6.0",
+    "numpy>=2.5.5",
+    "pandas>=3.1.1",
+    "requests>=2.34.2",
+    "scikit-learn>=1.9.1",
+    "xgboost>=3.4.1",
+]
+
+[project.scripts]
+flood-ai-build-dataset = "flood_ai.dataset:main"
+flood-ai-train = "flood_ai.train:main"
+flood-ai-serve = "flood_ai.api:main"
+
+[build-system]
+requires = ["uv_build>=0.13.8,<0.14.0"]
+build-backend = "uv_build"
