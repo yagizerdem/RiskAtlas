@@ -9,8 +9,7 @@
     "clear": "docusaurus clear",
     "typecheck": "tsc --noEmit",
     "ui:add": "shadcn add",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build --nojekyll"
+    "deploy": "docusaurus build && gh-pages -d build --nojekyll"
   },
   "engines": {
     "node": ">=20.0"
@@ -38,9 +37,11 @@
   "devDependencies": {
     "@docusaurus/faster": "^3.10.2",
     "@docusaurus/module-type-aliases": "^3.10.2",
+    "@docusaurus/plugin-content-docs": "^3.10.2",
     "@docusaurus/tsconfig": "^3.10.2",
     "@docusaurus/types": "^3.10.2",
     "@tailwindcss/postcss": "^4.3.5",
+    "@types/node": "^26.6.5",
     "@types/react": "^19.3.2",
     "@types/react-dom": "^19.3.0",
     "gh-pages": "^6.3.0",

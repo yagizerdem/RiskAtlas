@@ -1,16 +1,16 @@
 # RiskAtlas dokümantasyonu
 
-Docusaurus tabanlı dokümantasyon sitesi. Ana projenin pnpm kurulumundan
-ayrı olarak npm ile yönetilir.
+Docusaurus ve TypeScript tabanlı dokümantasyon sitesi. Depo kökündeki pnpm
+çalışma alanının parçasıdır.
 
 ## Yerelde çalıştırma
 
 Depo kökünden:
 
 ```bash
-cd web-doc
-npm ci
-npm start
+pnpm install
+cd apps/web-doc
+pnpm start
 ```
 
 Adres: http://localhost:3000/RiskAtlas/
@@ -19,16 +19,16 @@ Adres: http://localhost:3000/RiskAtlas/
 
 | Komut | İşlev |
 | --- | --- |
-| `npm start` | Geliştirme sunucusu |
-| `npm run build` | `build/` klasörüne üretim derlemesi |
-| `npm run serve` | Üretim derlemesini yerelde önizleme |
-| `npm run clear` | Docusaurus önbelleğini temizleme |
-| `npm run typecheck` | TypeScript ve kurulu UI bileşenlerini kontrol etme |
-| `npm run ui:add -- button` | Resmi shadcn CLI ile bileşen ekleme |
-| `npm run deploy` | Derleyip `gh-pages` dalına yayınlama |
+| `pnpm start` | Geliştirme sunucusu |
+| `pnpm build` | `build/` klasörüne üretim derlemesi |
+| `pnpm serve` | Üretim derlemesini yerelde önizleme |
+| `pnpm clear` | Docusaurus önbelleğini temizleme |
+| `pnpm typecheck` | TypeScript ve kurulu UI bileşenlerini kontrol etme |
+| `pnpm ui:add button` | Resmi shadcn CLI ile bileşen ekleme |
+| `pnpm run deploy` | Derleyip `gh-pages` dalına yayınlama |
 
 Sayfalar `docs/` klasöründedir. Kenar çubuğu otomatik oluşturulur.
-Site ayarları `docusaurus.config.js` dosyasındadır.
+Site ayarları `docusaurus.config.ts` dosyasındadır.
 
 Tailwind CSS 4 ve shadcn/ui (`base-nova`) kurulu. Tüm UI bileşenleri
 `src/components/ui/` altında, tema değişkenleri `src/css/shadcn.css` içindedir.

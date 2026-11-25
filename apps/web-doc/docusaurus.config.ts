@@ -1,5 +1,7 @@
-/** @type {import('@docusaurus/types').Config} */
-const config = {
+import type {Config} from '@docusaurus/types';
+import type * as Preset from '@docusaurus/preset-classic';
+
+const config: Config = {
   title: 'RiskAtlas Dokümantasyon',
   tagline: 'RiskAtlas proje ve geliştirici dokümantasyonu',
   url: 'https://yagizerdem.github.io',
@@ -9,7 +11,7 @@ const config = {
   deploymentBranch: 'gh-pages',
   trailingSlash: true,
   onBrokenLinks: 'throw',
-  plugins: ['./plugins/tailwind-shadcn.cjs'],
+  plugins: ['./plugins/tailwind-shadcn.ts'],
   future: {
     faster: {
       lightningCssMinimizer: true,
@@ -25,14 +27,14 @@ const config = {
       {
         docs: {
           routeBasePath: '/',
-          sidebarPath: './sidebars.js',
-          editUrl: 'https://github.com/yagizerdem/RiskAtlas/edit/main/web-doc/',
+          sidebarPath: './sidebars.ts',
+          editUrl: 'https://github.com/yagizerdem/RiskAtlas/edit/main/apps/web-doc/',
         },
         blog: false,
         theme: {
           customCss: './src/css/custom.css',
         },
-      },
+      } satisfies Preset.Options,
     ],
   ],
   themeConfig: {
@@ -56,7 +58,7 @@ const config = {
       style: 'dark',
       copyright: `© ${new Date().getFullYear()} RiskAtlas. Docusaurus ile oluşturuldu.`,
     },
-  },
+  } satisfies Preset.ThemeConfig,
 };
 
-module.exports = config;
+export default config;
